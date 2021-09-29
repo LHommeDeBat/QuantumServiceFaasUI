@@ -1,7 +1,8 @@
 export class FireEventDto {
   device?: string;
-  replyTo?: string;
   eventType?: string;
-  executedApplication?: any;
+  executedApplicationName?: string;
+  sizeThreshold?: number;
+  triggerName?: string;
   additionalProperties: any;
 }

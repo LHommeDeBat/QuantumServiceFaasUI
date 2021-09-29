@@ -85,16 +85,16 @@ export class EventTriggerListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((data: FireEventDto) => {
       if (data) {
-        const dto: FireEventDto = {
+        const dto: any = {
           device: data.device,
-          replyTo: data.replyTo,
           eventType: data.eventType,
           additionalProperties: data.additionalProperties,
         };
 
-        this.eventTriggerService.fireEvent(dto).subscribe(() => {
-          this.toastService.displayToast('Event was successfully fired!');
-        });
+        console.log(dto);
+        // this.eventTriggerService.fireEvent(dto).subscribe(() => {
+        //  this.toastService.displayToast('Event was successfully fired!');
+        //});
       }
     });
   }

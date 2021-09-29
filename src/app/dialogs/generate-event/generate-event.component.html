@@ -12,29 +12,36 @@
     </mat-form-field>
 
     <mat-form-field class="w-100">
-      <mat-label>Reply to</mat-label>
-      <input matInput id="replyTo" formControlName="replyTo" required>
-    </mat-form-field>
-
-    <mat-form-field class="w-100">
-      <mat-label>Type</mat-label>
+      <mat-label>Event Type</mat-label>
       <mat-select id="eventType" formControlName="eventType" required>
+        <mat-option [value]="'BASIC'">Basic</mat-option>
         <mat-option [value]="'QUEUE_SIZE'">Queue Size</mat-option>
         <mat-option [value]="'EXECUTION_RESULT'">Execution Result</mat-option>
       </mat-select>
     </mat-form-field>
 
+    <ng-container *ngIf="eventType && eventType.value === 'BASIC'">
+      <mat-form-field class="w-100">
+        <mat-label>EventTrigger</mat-label>
+        <mat-select id="triggerName" formControlName="triggerName" required>
+          <mat-option *ngFor="let eventTrigger of eventTriggers" [value]="eventTrigger.name">
+            {{ eventTrigger.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </ng-container>
+
     <ng-container *ngIf="eventType && eventType.value === 'QUEUE_SIZE'">
       <mat-form-field class="w-100">
-        <mat-label>Queue Size</mat-label>
-        <input matInput id="queueSize" formControlName="queueSize" type="number" required>
+        <mat-label>Queue-Size Threshold</mat-label>
+        <input matInput id="sizeThreshold" formControlName="sizeThreshold" type="number" required>
       </mat-form-field>
     </ng-container>
 
     <ng-container *ngIf="eventType && eventType.value === 'EXECUTION_RESULT'">
       <mat-form-field class="w-100">
         <mat-label>Quantum-Application</mat-label>
-        <mat-select id="executedApplication" formControlName="executedApplication" required>
+        <mat-select id="executedApplicationName" formControlName="executedApplicationName" required>
           <mat-option *ngFor="let application of quantumApplications" [value]="application.name">
             {{ application.name }}
           </mat-option>

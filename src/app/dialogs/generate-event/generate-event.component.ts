@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FireEventDto } from '../../models/fire-event-dto';
 import { IbmqService } from '../../services/ibmq.service';
 import { QuantumApplicationService } from '../../services/quantum-application.service';
+import { EventTriggerService } from '../../services/event-trigger.service';
 
 @Component({
   selector: 'app-generate-event',
@@ -14,6 +15,7 @@ export class GenerateEventComponent implements OnInit {
 
   availableDevices: string[] = [];
   quantumApplications: any[] = [];
+  eventTriggers: any[] = [];
   loadingDevices: boolean = true;
 
   parametersNameForm = new FormArray([]);
@@ -23,16 +25,16 @@ export class GenerateEventComponent implements OnInit {
     device: new FormControl('no-devices', [
       Validators.required
     ]),
-    eventType: new FormControl(this.data.eventType ? this.data.eventType : 'QUEUE_SIZE', [
+    eventType: new FormControl(this.data.eventType ? this.data.eventType : 'BASIC', [
       Validators.required
     ]),
-    replyTo: new FormControl(this.data.replyTo ? this.data.replyTo : 'JOB.RESULT.QUEUE', [
+    sizeThreshold: new FormControl(this.data.sizeThreshold ? this.data.sizeThreshold: undefined, [
       Validators.required
     ]),
-    queueSize: new FormControl(this.data.additionalProperties && this.data.additionalProperties.queueSize ? this.data.additionalProperties.queueSize : undefined, [
+    executedApplicationName: new FormControl(this.data.executedApplicationName ? this.data.executedApplicationName : undefined, [
       Validators.required
     ]),
-    executedApplication: new FormControl(this.data.executedApplication ? this.data.executedApplication : undefined, [
+    triggerName: new FormControl(this.data.triggerName ? this.data.triggerName : undefined, [
       Validators.required
     ])
   });
@@ -40,6 +42,7 @@ export class GenerateEventComponent implements OnInit {
   constructor(@Inject(MAT_DIALOG_DATA) public data: FireEventDto,
               private ibmqService: IbmqService,
               private quantumApplicationService: QuantumApplicationService,
+              private eventTriggerService: EventTriggerService,
               private dialogRef: MatDialogRef<GenerateEventComponent>) {
   }
 
@@ -50,6 +53,18 @@ export class GenerateEventComponent implements OnInit {
 
     this.quantumApplicationService.getQuantumApplications().subscribe(response => {
       this.quantumApplications = response._embedded ? response._embedded.quantumApplications : [];
+
+      if (this.quantumApplications.length > 0) {
+        this.executedApplicationName?.setValue(this.quantumApplications[0].name);
+      }
+    });
+
+    this.eventTriggerService.getEventTriggers().subscribe(response => {
+      this.eventTriggers = response._embedded ? response._embedded.eventTriggers : [];
+
+      if (this.eventTriggers.length > 0) {
+        this.triggerName?.setValue(this.eventTriggers[0].name);
+      }
     });
 
     this.ibmqService.getAvailableDevices().subscribe(response => {
@@ -64,12 +79,14 @@ export class GenerateEventComponent implements OnInit {
     this.dialogRef.beforeClosed().subscribe(() => {
       this.data.device = this.device ? this.device.value : undefined;
       this.data.eventType = this.eventType ? this.eventType.value : undefined;
-      this.data.replyTo = this.replyTo ? this.replyTo.value : undefined;
+      if (this.data.eventType === 'BASIC') {
+        this.data.additionalProperties.triggerName = this.triggerName ? this.triggerName.value : undefined;
+      }
       if (this.data.eventType === 'QUEUE_SIZE') {
-        this.data.additionalProperties.queueSize = this.queueSize ? this.queueSize.value : undefined;
+        this.data.additionalProperties.sizeThreshold = this.sizeThreshold ? this.sizeThreshold.value : undefined;
       }
       if (this.data.eventType === 'EXECUTION_RESULT') {
-        this.data.additionalProperties.executedApplication = this.executedApplication ? this.executedApplication.value : undefined;
+        this.data.additionalProperties.executedApplicationName = this.executedApplicationName ? this.executedApplicationName.value : undefined;
       }
       for (let i = 0; i < this.parametersNameForm.length; i++) {
         this.data.additionalProperties[this.parametersNameForm.at(i).value.toString()] = this.parametersValueForm.at(i).value;
@@ -85,16 +102,16 @@ export class GenerateEventComponent implements OnInit {
     return this.form ? this.form.get('eventType') : null;
   }
 
-  get replyTo(): AbstractControl | null {
-    return this.form ? this.form.get('replyTo') : null;
+  get sizeThreshold(): AbstractControl | null {
+    return this.form ? this.form.get('sizeThreshold') : null;
   }
 
-  get queueSize(): AbstractControl | null {
-    return this.form ? this.form.get('queueSize') : null;
+  get executedApplicationName(): AbstractControl | null {
+    return this.form ? this.form.get('executedApplicationName') : null;
   }
 
-  get executedApplication(): AbstractControl | null {
-    return this.form ? this.form.get('executedApplication') : null;
+  get triggerName(): AbstractControl | null {
+    return this.form ? this.form.get('triggerName') : null;
   }
 
   removeParameter(index: number) {
@@ -113,8 +130,9 @@ export class GenerateEventComponent implements OnInit {
       this.availableDevices.length === 0 ||
       this.device?.errors?.required ||
       this.eventType?.errors?.required ||
-      this.replyTo?.errors?.required ||
-      (this.eventType?.value === 'QUEUE_SIZE' && this.queueSize?.errors?.required) ||
+      (this.eventType?.value === 'QUEUE_SIZE' && this.sizeThreshold?.errors?.required) ||
+      (this.eventType?.value === 'EXECUTION_RESULT' && this.executedApplicationName?.errors?.required) ||
+      (this.eventType?.value === 'BASIC' && this.triggerName?.errors?.required) ||
       this.checkParameters()
     );
   }
