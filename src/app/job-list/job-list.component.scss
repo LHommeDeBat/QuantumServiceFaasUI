@@ -1,0 +1,22 @@
+.job-row:hover {
+  cursor: pointer;
+  background-color: rgba(128, 128, 128, 0.23);
+}
+
+.details-bar-close-button {
+  font-size: 30px;
+}
+
+.details-bar-close-button:hover {
+  color: red;
+  cursor: pointer;
+}
+
+th a {
+  display: block;
+  color: blue !important;
+}
+
+th a:hover {
+  color: blue !important;
+}

@@ -1,0 +1,22 @@
+.side-navigation {
+  width: 15%;
+  height: 100%;
+  text-align: center;
+
+  img {
+    width: 200px;
+    height: 200px;
+  }
+
+  .title {
+    color: red;
+  }
+
+  mat-nav-list {
+    text-align: center;
+  }
+}
+
+.tab-active {
+  background-color: rgba(189, 189, 189, 0.3) !important;
+}

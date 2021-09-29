@@ -1,0 +1,33 @@
+<h2 mat-dialog-title> Register {{ data.application.name }} to Event-Triggers </h2>
+
+<mat-card class="m-3">
+  <table class="table">
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Event Type</th>
+      <th class="col-3">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let event of availableEventTriggers">
+      <td>{{ event.name }}</td>
+      <td>{{ generateEventTypeDisplay(event) }}</td>
+      <td class="col-3">
+        <button type="button" class="btn btn-primary btn-sm" (click)="registerApplicationToEventTrigger(event)">
+          <i class="bi bi-link"></i>
+        </button>
+      </td>
+    </tr>
+    <tr *ngIf="availableEventTriggers.length === 0">
+      <div class="mt-1">
+        There are no event triggers available for registration!
+      </div>
+    </tr>
+    </tbody>
+  </table>
+</mat-card>
+
+<mat-dialog-actions>
+  <button mat-raised-button (click)="close()">Close</button>
+</mat-dialog-actions>

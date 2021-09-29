@@ -1,0 +1,221 @@
+<mat-drawer-container class="h-100">
+
+  <!-- Application Details-Sidenav -->
+  <mat-drawer #drawer mode="side" class="h-100 w-50" position="end" [mode]="'over'">
+    <mat-icon class="details-bar-close-button" (click)="closeDetailsView()">close</mat-icon>
+    <div class="mx-3" *ngIf="selectedJob">
+      <h2> Job Information </h2>
+    </div>
+    <mat-card class="m-3" *ngIf="selectedJob">
+      <mat-form-field class="w-50">
+        <mat-label>ID</mat-label>
+        <input matInput [(ngModel)]="selectedJob.id" readonly>
+      </mat-form-field>
+      <mat-form-field class="w-50" *ngIf="selectedJob.ibmqId">
+        <mat-label>IBMQ-ID</mat-label>
+        <input matInput [(ngModel)]="selectedJob.ibmqId" readonly>
+      </mat-form-field>
+    </mat-card>
+
+    <mat-card class="m-3" *ngIf="selectedJob">
+      <mat-form-field class="w-100" *ngIf="selectedJob && selectedJob.quantumApplication">
+        <mat-label>Quantum-Application</mat-label>
+        <input matInput [(ngModel)]="selectedJob.quantumApplication.name" readonly>
+      </mat-form-field>
+      <mat-form-field class="w-50">
+        <mat-label>Device</mat-label>
+        <input matInput [(ngModel)]="selectedJob.device" readonly>
+      </mat-form-field>
+      <mat-form-field class="w-50">
+        <mat-label>Status</mat-label>
+        <input matInput [(ngModel)]="selectedJob.status" readonly>
+      </mat-form-field>
+    </mat-card>
+
+    <mat-card class="m-3" *ngIf="selectedJob">
+      <mat-form-field class="w-100" *ngIf="selectedJob.scriptExecutionDate">
+        <mat-label>Script executed at</mat-label>
+        <input matInput [ngModel]="selectedJob.scriptExecutionDate | date:'MMMM d, y, H:mm:ss'" readonly>
+      </mat-form-field>
+      <mat-form-field class="w-50" *ngIf="selectedJob.creationDate">
+        <mat-label>Created at</mat-label>
+        <input matInput [ngModel]="selectedJob.creationDate | date:'MMMM d, y, H:mm:ss'" readonly>
+      </mat-form-field>
+      <mat-form-field class="w-50" *ngIf="selectedJob.endDate">
+        <mat-label>Finished at</mat-label>
+        <input matInput [ngModel]="selectedJob.endDate | date:'MMMM d, y, H:mm:ss'" readonly>
+      </mat-form-field>
+    </mat-card>
+
+    <mat-card class="m-3" *ngIf="selectedJob && sortedJobStatuses.length > 0">
+      <h3>Status-Details</h3>
+      <mat-form-field class="w-100" *ngFor="let statusDetail of sortedJobStatuses">
+        <mat-label>{{ statusDetail.status }}</mat-label>
+        <input matInput [ngModel]="statusDetail.statusReached | date:'MMMM d, y, H:mm:ss'" readonly>
+      </mat-form-field>
+    </mat-card>
+
+    <mat-card class="m-3" *ngIf="selectedJob && selectedJob.status === 'FAILED'">
+      <mat-form-field class="w-100">
+        <mat-label>Error-Logs</mat-label>
+        <textarea matInput [ngModel]="prettyPrintLogs(selectedJob.errorLogs)" [matTextareaAutosize]="true" readonly></textarea>
+      </mat-form-field>
+    </mat-card>
+
+    <mat-card class="m-3" *ngIf="selectedJob && selectedJob.quantumApplication.script">
+      <mat-form-field class="w-100">
+        <mat-label>Script</mat-label>
+        <textarea matInput [ngModel]="selectedJob.quantumApplication.script" [matTextareaAutosize]="true" readonly></textarea>
+      </mat-form-field>
+
+      <h4>Used Parameters</h4>
+      <mat-form-field class="w-100">
+        <mat-label>device</mat-label>
+        <input matInput [ngModel]="selectedJob.device" readonly>
+      </mat-form-field>
+      <mat-form-field class="w-100">
+        <mat-label>apiToken</mat-label>
+        <input matInput [ngModel]="'**********************'" readonly>
+      </mat-form-field>
+      <mat-form-field class="w-100" *ngFor="let parameter of selectedJob.usedParameters | keyvalue">
+        <mat-label>{{ parameter.key }}</mat-label>
+        <input matInput [ngModel]="parameter.value" readonly>
+      </mat-form-field>
+    </mat-card>
+
+    <mat-card class="m-3" *ngIf="selectedJob && selectedJob.result">
+      <mat-form-field class="w-100">
+        <mat-label>Result (JSON)</mat-label>
+        <textarea matInput [ngModel]="parseResult(selectedJob.result) | json" [matTextareaAutosize]="true" readonly></textarea>
+      </mat-form-field>
+    </mat-card>
+  </mat-drawer>
+
+  <!-- Application Main-View -->
+  <mat-card class="m-3">
+    <div class="float-end">
+      <mat-form-field class="mx-3">
+        <mat-label>Filter by status</mat-label>
+        <mat-select [(ngModel)]="statusFilter" (selectionChange)="getJobs()" multiple>
+          <mat-option *ngFor="let status of availableStatuses" [value]="status">{{ status }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" (click)="getJobs()">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+
+    <table class="table">
+      <thead>
+      <tr>
+        <th>
+          <a (click)="changeSort('quantumApplication.name')">Quantum-Application
+            <i *ngIf="checkSort('quantumApplication.name') !== 'none'"
+               [ngClass]="checkSort('quantumApplication.name') === 'desc' ? 'bi bi-arrow-down' : 'bi bi-arrow-up'">
+            </i>
+          </a>
+        </th>
+        <th>
+          <a (click)="changeSort('device')">Device
+            <i *ngIf="checkSort('device') !== 'none'"
+               [ngClass]="checkSort('device') === 'desc' ? 'bi bi-arrow-down' : 'bi bi-arrow-up'">
+            </i>
+          </a>
+        </th>
+        <th>
+          <a (click)="changeSort('status')">Status
+            <i *ngIf="checkSort('status') !== 'none'"
+               [ngClass]="checkSort('status') === 'desc' ? 'bi bi-arrow-down' : 'bi bi-arrow-up'">
+            </i>
+          </a>
+        </th>
+        <th>
+          <a (click)="changeSort('scriptExecutionDate')">Script executed at
+            <i *ngIf="checkSort('scriptExecutionDate') !== 'none'"
+               [ngClass]="checkSort('scriptExecutionDate') === 'desc' ? 'bi bi-arrow-down' : 'bi bi-arrow-up'">
+            </i>
+          </a>
+        </th>
+        <th>
+          <a (click)="changeSort('creationDate')">Created at
+            <i *ngIf="checkSort('creationDate') !== 'none'"
+               [ngClass]="checkSort('creationDate') === 'desc' ? 'bi bi-arrow-down' : 'bi bi-arrow-up'">
+            </i>
+          </a>
+        </th>
+        <th>
+          <a (click)="changeSort('endDate')">Finished at
+            <i *ngIf="checkSort('endDate') !== 'none'"
+               [ngClass]="checkSort('endDate') === 'desc' ? 'bi bi-arrow-down' : 'bi bi-arrow-up'">
+            </i>
+          </a>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr class="job-row" *ngFor="let job of jobs" (click)="selectJob(job)">
+        <td>{{ job.quantumApplication ? job.quantumApplication.name : '' }}</td>
+        <td>{{ job.device }}</td>
+        <td>{{ job.status }}</td>
+        <td>{{ job.scriptExecutionDate | date:'MMMM d, y, H:mm:ss' }}</td>
+        <td>{{ job.creationDate | date:'MMMM d, y, H:mm:ss' }}</td>
+        <td>{{ job.endDate | date:'MMMM d, y, H:mm:ss' }}</td>
+      </tr>
+      <tr *ngIf="jobs.length === 0">
+        <div class="mt-1">
+          No jobs found!
+        </div>
+      </tr>
+      </tbody>
+    </table>
+    <div class="row">
+      <div class="col">
+        <mat-form-field>
+          <mat-label>Page size</mat-label>
+          <mat-select [(value)]="pageSize" (selectionChange)="getJobs()">
+            <mat-option [value]="1">1</mat-option>
+            <mat-option [value]="10">10</mat-option>
+            <mat-option [value]="25">25</mat-option>
+            <mat-option [value]="50">50</mat-option>
+            <mat-option [value]="100">100</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <nav *ngIf="paginationLinks">
+          <ul class="pagination justify-content-end">
+            <li class="page-item">
+              <a class="page-link"
+                 [ngClass]="!this.paginationLinks.first || this.paginationLinks.first.href === this.paginationLinks.self.href ? 'page-disabled': 'page-enabled'"
+                 (click)="getJobs(this.paginationLinks.first.href)">First
+              </a>
+            </li>
+            <li class="page-item">
+              <a class="page-link"
+                 [ngClass]="!this.paginationLinks.prev || this.paginationLinks.prev.href === this.paginationLinks.self.href ? 'page-disabled': 'page-enabled'"
+                 (click)="getJobs(this.paginationLinks.prev.href)">Previous
+              </a>
+            </li>
+            <li class="page-item active" aria-current="page">
+              <a class="page-link current-page"
+                 [ngClass]="{'page-disabled': !this.paginationLinks.self}">{{ this.paginationDetails.number + 1 }}
+              </a>
+            </li>
+            <li class="page-item">
+              <a class="page-link"
+                 [ngClass]="!this.paginationLinks.next || this.paginationLinks.next.href === this.paginationLinks.self.href ? 'page-disabled': 'page-enabled'"
+                 (click)="getJobs(this.paginationLinks.next.href)">Next
+              </a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" [ngClass]="!this.paginationLinks.last || this.paginationLinks.last.href === this.paginationLinks.self.href ? 'page-disabled': 'page-enabled'"
+                 (click)="getJobs(this.paginationLinks.last.href)">Last
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </mat-card>
+</mat-drawer-container>

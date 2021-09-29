@@ -1,0 +1,41 @@
+<h2 mat-dialog-title> Create Event-Trigger </h2>
+
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field class="w-100">
+      <mat-label>Name</mat-label>
+      <input matInput id="name" formControlName="name" required>
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Type</mat-label>
+      <mat-select id="eventType" formControlName="eventType" required>
+        <mat-option [value]="'QUEUE_SIZE'">Queue Size</mat-option>
+        <mat-option [value]="'EXECUTION_RESULT'">Execution Result</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <ng-container *ngIf="eventType && eventType.value === 'QUEUE_SIZE'">
+      <mat-form-field class="w-100">
+        <mat-label>Queue Size</mat-label>
+        <input matInput id="queueSize" formControlName="queueSize" type="number" required>
+      </mat-form-field>
+    </ng-container>
+
+    <ng-container *ngIf="eventType && eventType.value === 'EXECUTION_RESULT'">
+      <mat-form-field class="w-100">
+        <mat-label>Quantum-Application</mat-label>
+        <mat-select id="executedApplication" formControlName="executedApplication" required>
+          <mat-option *ngFor="let application of availableQuantumApplications" [value]="application">
+            {{ application.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </ng-container>
+  </form>
+</div>
+
+<mat-dialog-actions>
+  <button mat-raised-button (click)="close()">Close</button>
+  <button mat-raised-button color="primary" [disabled]="isRequiredDataMissing()" [mat-dialog-close]="data">Create</button>
+</mat-dialog-actions>

@@ -1,0 +1,37 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~bootstrap/dist/css/bootstrap.css";
+@import "~bootstrap-icons/font/bootstrap-icons.css";
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.page-disabled {
+  pointer-events: none;
+  color: gray;
+}
+
+.page-enabled {
+  cursor: pointer;
+}
+
+.current-page {
+  pointer-events: none;
+}
+
+th a {
+  cursor: pointer;
+  color: blue;
+}
+
+.w-15 {
+  width: 15%;
+}
+
+.w-40 {
+  width: 40%;
+}
+
+#add-parameter-icon {
+  color: green;
+}
+

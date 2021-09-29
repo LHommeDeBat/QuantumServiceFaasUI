@@ -1,0 +1,79 @@
+<h2 mat-dialog-title> Generate Event </h2>
+
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field class="w-100">
+      <mat-label>{{ loadingDevices ? 'Loading devices...' : 'Device' }}</mat-label>
+      <mat-select id="device" formControlName="device" required [disabled]="this.availableDevices.length === 0">
+        <mat-option *ngFor="let availableDevice of availableDevices" [value]="availableDevice">{{ availableDevice }}</mat-option>
+        <mat-option *ngIf="!loadingDevices && this.availableDevices.length === 0" [value]="'no-devices'">No devices available</mat-option>
+      </mat-select>
+      <mat-spinner matPrefix *ngIf="loadingDevices" mode="indeterminate" diameter="17"></mat-spinner>
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Reply to</mat-label>
+      <input matInput id="replyTo" formControlName="replyTo" required>
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Type</mat-label>
+      <mat-select id="eventType" formControlName="eventType" required>
+        <mat-option [value]="'QUEUE_SIZE'">Queue Size</mat-option>
+        <mat-option [value]="'EXECUTION_RESULT'">Execution Result</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <ng-container *ngIf="eventType && eventType.value === 'QUEUE_SIZE'">
+      <mat-form-field class="w-100">
+        <mat-label>Queue Size</mat-label>
+        <input matInput id="queueSize" formControlName="queueSize" type="number" required>
+      </mat-form-field>
+    </ng-container>
+
+    <ng-container *ngIf="eventType && eventType.value === 'EXECUTION_RESULT'">
+      <mat-form-field class="w-100">
+        <mat-label>Quantum-Application</mat-label>
+        <mat-select id="executedApplication" formControlName="executedApplication" required>
+          <mat-option *ngFor="let application of quantumApplications" [value]="application.name">
+            {{ application.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </ng-container>
+
+    <h4>Parameters</h4>
+
+    <div *ngFor="let parameter of parametersNameForm.controls; let i = index">
+      <div>
+        <mat-form-field class="w-40">
+          <mat-label>Name</mat-label>
+          <input [formControl]="$any(parametersNameForm).controls[i]" matInput required>
+        </mat-form-field>
+        <mat-form-field class="w-40 mx-4">
+          <mat-label>Value</mat-label>
+          <input [formControl]="$any(parametersValueForm).controls[i]" matInput required>
+        </mat-form-field>
+        <button mat-icon-button class="float-end" color="warn" (click)="removeParameter(i)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="mx-5 text-center" *ngIf="parametersNameForm.controls.length === 0">
+      No parameters will be sent to invoke quantum applications! Add needed parameters.
+    </div>
+
+    <div class="float-end">
+      <button mat-icon-button (click)="addParameter()">
+        <mat-icon id="add-parameter-icon">queue</mat-icon>
+      </button>
+    </div>
+
+  </form>
+</div>
+
+<mat-dialog-actions>
+  <button mat-raised-button (click)="close()">Close</button>
+  <button mat-raised-button color="primary" [disabled]="isRequiredDataMissing()" [mat-dialog-close]="data">Generate</button>
+</mat-dialog-actions>

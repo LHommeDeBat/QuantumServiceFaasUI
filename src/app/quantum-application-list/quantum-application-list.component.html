@@ -1,0 +1,127 @@
+<mat-drawer-container class="h-100">
+
+  <!-- Application Details-Sidenav -->
+  <mat-drawer #drawer mode="side" class="h-100 w-50" position="end" [mode]="'over'">
+    <mat-icon class="details-bar-close-button" (click)="closeDetailsView()">close</mat-icon>
+    <div class="mx-3" *ngIf="selectedApplication">
+      <h2> Application Information </h2>
+    </div>
+    <mat-card class="m-3" *ngIf="selectedApplication">
+      <mat-form-field class="w-100">
+        <mat-label>ID</mat-label>
+        <input matInput [(ngModel)]="selectedApplication.id" readonly>
+      </mat-form-field>
+    </mat-card>
+
+    <mat-card class="m-3" *ngIf="selectedApplication">
+      <mat-form-field class="w-100">
+        <mat-label>Name</mat-label>
+        <input matInput [(ngModel)]="selectedApplication.name" readonly>
+      </mat-form-field>
+    </mat-card>
+
+    <mat-card class="m-3" *ngIf="selectedApplication && getAmountOfParameters(selectedApplication) > 0">
+      <h4>Parameters with default values</h4>
+      <mat-form-field class="w-100" *ngFor="let parameter of selectedApplication.parameters | keyvalue">
+        <mat-label>{{ parameter.key }}</mat-label>
+        <input matInput [ngModel]="getParameterDefaultValue(parameter.value)" readonly>
+      </mat-form-field>
+    </mat-card>
+
+    <mat-card class="m-3" *ngIf="selectedApplication && selectedApplication.script">
+      <mat-form-field class="w-100">
+        <mat-label>Script</mat-label>
+        <textarea matInput [ngModel]="selectedApplication.script" [matTextareaAutosize]="true" readonly></textarea>
+      </mat-form-field>
+    </mat-card>
+
+    <div class="m-3" *ngIf="selectedApplication">
+      <button mat-raised-button color="primary" class="w-100"
+              (click)="invokeApplication(selectedApplication)">
+        Invoke Quantum-Application
+      </button>
+    </div>
+
+    <div class="m-3" *ngIf="selectedApplication">
+      <button mat-raised-button color="accent" class="w-100"
+              (click)="downloadApplicationScript(selectedApplication, true)">
+        Download Script
+      </button>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="mx-3">
+      <h2> Registered Event-Triggers </h2>
+    </div>
+
+    <mat-card class="m-3">
+      <button type="button" class="btn btn-success" (click)="openRegisterEventTriggersDialog()">
+        <i class="bi bi-plus"></i>
+      </button>
+      <table class="table">
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Event Type</th>
+          <th class="col-3">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let eventTrigger of applicationEventTriggers">
+          <td>{{ eventTrigger.name }}</td>
+          <td>{{ generateEventTypeDisplay(eventTrigger) }}</td>
+          <td class="col-3">
+            <button type="button" class="btn btn-danger btn-sm" (click)="unregisterApplicationFromEventTrigger(selectedApplication, eventTrigger)">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="applicationEventTriggers.length === 0">
+          <div class="mt-1">
+            This application is not registered for any event triggers!
+          </div>
+        </tr>
+        </tbody>
+      </table>
+    </mat-card>
+  </mat-drawer>
+
+  <!-- Application Main-View -->
+  <mat-card class="m-3">
+    <button type="button" class="btn btn-success" (click)="addQuantumApplication()">
+      <i class="bi bi-plus"></i>
+    </button>
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Parameters</th>
+        <th class="col-3">Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr class="application-row" *ngFor="let application of quantumApplications" (click)="selectApplication(application)">
+        <td>{{ application.name }}</td>
+        <td>{{ getAmountOfParameters(application) }}</td>
+        <td class="col-3">
+          <button type="button" class="btn btn-primary btn-sm" (click)="invokeApplication(application); $event.stopPropagation()">
+            <i class="bi bi-play"></i>
+          </button>
+          <button type="button" class="btn btn-primary btn-sm mx-1" (click)="downloadApplicationScript(application, true); $event.stopPropagation()">
+            <i class="bi bi-download"></i>
+          </button>
+          <button type="button" class="btn btn-danger btn-sm" (click)="deleteQuantumApplication(application._links.self.href); $event.stopPropagation()">
+            <i class="bi bi-trash"></i>
+          </button>
+        </td>
+      </tr>
+      <tr *ngIf="quantumApplications.length === 0">
+        <div class="mt-1">
+          No quantum applications found!
+        </div>
+      </tr>
+      </tbody>
+    </table>
+  </mat-card>
+</mat-drawer-container>
