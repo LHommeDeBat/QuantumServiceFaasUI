@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class IbmqService {
 
-  url = 'http://localhost:9005/ibmq';
+  url = 'http://localhost:8000/ibmq';
 
   constructor(private http: HttpClient) {}
 

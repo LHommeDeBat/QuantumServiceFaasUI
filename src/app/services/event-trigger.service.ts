@@ -8,7 +8,7 @@ import { EventTriggerDto } from '../models/event-trigger-dto';
 })
 export class EventTriggerService {
 
-  url = 'http://localhost:9005/event-triggers';
+  url = 'http://localhost:8000/event-triggers';
 
   constructor(private http: HttpClient) {}
 

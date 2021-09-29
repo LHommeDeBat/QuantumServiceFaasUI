@@ -29,14 +29,6 @@ export class EventTriggerListComponent implements OnInit {
   getEventTriggers(): void {
     this.eventTriggerService.getEventTriggers().subscribe(response => {
       this.eventTriggers = response._embedded ? response._embedded.eventTriggers : [];
-
-      for (const eventTrigger of this.eventTriggers) {
-        if (eventTrigger.eventType === 'EXECUTION_RESULT') {
-          this.quantumApplicationService.getQuantumApplication(eventTrigger._links.executedApplication.href).subscribe( response => {
-            eventTrigger.executedApplication = response ? response : undefined;
-          });
-        }
-      }
     });
   }
 
@@ -73,11 +65,11 @@ export class EventTriggerListComponent implements OnInit {
 
   generateTypeDisplay(eventTrigger: any): string {
     if (eventTrigger.eventType === 'QUEUE_SIZE') {
-      return eventTrigger.eventType + ' <= ' + eventTrigger.queueSize;
+      return eventTrigger.eventType + ' <= ' + eventTrigger.sizeThreshold;
     }
 
     if (eventTrigger.eventType === 'EXECUTION_RESULT') {
-      return eventTrigger.eventType + ' (' + eventTrigger.executedApplication.name + ')';
+      return eventTrigger.eventType + ' (' + eventTrigger.executedApplicationName + ')';
     }
 
     return eventTrigger.eventType;

@@ -1,0 +1,30 @@
+<mat-card class="m-3">
+  <button type="button" class="btn btn-success" (click)="addProvider()">
+    <i class="bi bi-plus"></i>
+  </button>
+  <table class="table">
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Base URL</th>
+      <th class="col-3">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let provider of providers">
+      <td>{{ provider.name }}</td>
+      <td>{{ provider.baseUrl }}</td>
+      <td class="col-3">
+        <button type="button" class="btn btn-danger btn-sm" (click)="deleteProvider(provider._links.self.href)">
+          <i class="bi bi-trash"></i>
+        </button>
+      </td>
+    </tr>
+    <tr *ngIf="providers.length === 0">
+      <div class="mt-1">
+        No providers found!
+      </div>
+    </tr>
+    </tbody>
+  </table>
+</mat-card>

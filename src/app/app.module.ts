@@ -28,6 +28,8 @@ import { GenerateEventComponent } from './dialogs/generate-event/generate-event.
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { InvokeQuantumApplicationComponent } from './dialogs/invoke-quantum-application/invoke-quantum-application.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ProviderListComponent } from './provider-list/provider-list.component';
+import { AddProviderComponent } from './dialogs/add-provider/add-provider.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +41,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     AddEventTriggerComponent,
     RegisterEventTriggersComponent,
     GenerateEventComponent,
-    InvokeQuantumApplicationComponent
+    InvokeQuantumApplicationComponent,
+    ProviderListComponent,
+    AddProviderComponent
   ],
   imports: [
     BrowserModule,

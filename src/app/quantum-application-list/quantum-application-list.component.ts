@@ -47,14 +47,6 @@ export class QuantumApplicationListComponent implements OnInit {
   getApplicationEventTriggers(url: string): void {
       this.quantumApplicationService.getApplicationEventTriggers(url).subscribe(response => {
         this.applicationEventTriggers = response._embedded ? response._embedded.eventTriggers : [];
-
-        for (const eventTrigger of this.applicationEventTriggers) {
-          if (eventTrigger.eventType === 'EXECUTION_RESULT') {
-            this.quantumApplicationService.getQuantumApplication(eventTrigger._links.executedApplication.href).subscribe( response => {
-              eventTrigger.executedApplication = response ? response : undefined;
-            });
-          }
-        }
       });
   }
 
@@ -90,8 +82,9 @@ export class QuantumApplicationListComponent implements OnInit {
   selectApplication(application: any): void {
     if (!this.selectedApplication || this.selectedApplication.id !== application.id) {
       this.selectedApplication = application;
+      this.selectedApplication.codeAsText = window.atob(this.selectedApplication.code);
+      console.log(this.selectedApplication);
       this.getApplicationEventTriggers(application._links.eventTriggers.href);
-      this.downloadApplicationScript(application, false);
     }
     this.drawer?.open();
   }
@@ -110,11 +103,11 @@ export class QuantumApplicationListComponent implements OnInit {
 
   generateEventTypeDisplay(eventTrigger: any): string {
     if (eventTrigger.eventType === 'QUEUE_SIZE') {
-      return eventTrigger.eventType + ' <= ' + eventTrigger.queueSize;
+      return eventTrigger.eventType + ' <= ' + eventTrigger.sizeThreshold;
     }
 
     if (eventTrigger.eventType === 'EXECUTION_RESULT') {
-      return eventTrigger.eventType + ' (' + eventTrigger.executedApplication.name + ')';
+      return eventTrigger.eventType + ' (' + eventTrigger.executedApplicationName + ')';
     }
 
     return eventTrigger.eventType;
@@ -157,24 +150,11 @@ export class QuantumApplicationListComponent implements OnInit {
     });
   }
 
-  downloadApplicationScript(application: any, downloadToFilesystem: boolean): void {
-    this.quantumApplicationService.downloadApplicationScript(application._links.script.href).subscribe(response => {
-      if (downloadToFilesystem) {
-        const anchor = document.createElement('a');
-        anchor.download = application.name + '.py';
-        anchor.href = (window.webkitURL || window.URL).createObjectURL(response);
-        anchor.click();
-      } else {
-        this.reader.readAsText(response);
-      }
-    });
-  }
-
-  getAmountOfParameters(application: any): number {
-    return Object.keys(application.parameters).length
-  }
-
-  getParameterDefaultValue(parameter: any): any {
-    return parameter.defaultValue;
+  downloadApplicationScript(application: any): void {
+    const anchor = document.createElement('a');
+    const blob = new Blob([atob(application.code)], {type: 'text/plain'});
+    anchor.download = application.name + '.py';
+    anchor.href = (window.webkitURL || window.URL).createObjectURL(blob);
+    anchor.click();
   }
 }

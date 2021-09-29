@@ -8,7 +8,7 @@ import { QuantumApplicationUpload } from '../models/quantum-application-upload';
 })
 export class QuantumApplicationService {
 
-  url = 'http://localhost:9005/quantum-applications';
+  url = 'http://localhost:8000/quantum-applications';
 
   constructor(private http: HttpClient) {}
 

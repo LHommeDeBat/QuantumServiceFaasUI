@@ -1,0 +1,36 @@
+<h2 mat-dialog-title> Add new provider </h2>
+
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field class="w-100">
+      <mat-label>Name</mat-label>
+      <input matInput id="name" formControlName="name" required>
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Base-URL</mat-label>
+      <input matInput id="baseUrl" formControlName="baseUrl" required>
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Basic-Username</mat-label>
+      <input matInput id="basicUsername" formControlName="basicUsername" required>
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Basic-Password</mat-label>
+      <input matInput id="basicPassword" formControlName="basicPassword" required>
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Namespace</mat-label>
+      <input matInput id="namespace" formControlName="namespace" required>
+    </mat-form-field>
+  </form>
+</div>
+
+<mat-dialog-actions>
+  <button mat-raised-button (click)="close()">Close</button>
+  <button mat-raised-button color="primary" [disabled]="isRequiredDataMissing()" [mat-dialog-close]="data">Create
+  </button>
+</mat-dialog-actions>

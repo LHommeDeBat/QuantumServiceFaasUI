@@ -20,18 +20,24 @@
       </mat-form-field>
     </mat-card>
 
-    <mat-card class="m-3" *ngIf="selectedApplication && getAmountOfParameters(selectedApplication) > 0">
-      <h4>Parameters with default values</h4>
-      <mat-form-field class="w-100" *ngFor="let parameter of selectedApplication.parameters | keyvalue">
-        <mat-label>{{ parameter.key }}</mat-label>
-        <input matInput [ngModel]="getParameterDefaultValue(parameter.value)" readonly>
+    <mat-card class="m-3" *ngIf="selectedApplication && selectedApplication.dockerImage">
+      <mat-form-field class="w-100">
+        <mat-label>Docker-Image</mat-label>
+        <textarea matInput [ngModel]="selectedApplication.dockerImage" [matTextareaAutosize]="true" readonly></textarea>
       </mat-form-field>
     </mat-card>
 
-    <mat-card class="m-3" *ngIf="selectedApplication && selectedApplication.script">
+    <mat-card class="m-3" *ngIf="selectedApplication && selectedApplication.notificationAddress">
+      <mat-form-field class="w-100">
+        <mat-label>Notification-Address</mat-label>
+        <textarea matInput [ngModel]="selectedApplication.notificationAddress" [matTextareaAutosize]="true" readonly></textarea>
+      </mat-form-field>
+    </mat-card>
+
+    <mat-card class="m-3" *ngIf="selectedApplication && selectedApplication.codeAsText">
       <mat-form-field class="w-100">
         <mat-label>Script</mat-label>
-        <textarea matInput [ngModel]="selectedApplication.script" [matTextareaAutosize]="true" readonly></textarea>
+        <textarea matInput [ngModel]="selectedApplication.codeAsText" [matTextareaAutosize]="true" readonly></textarea>
       </mat-form-field>
     </mat-card>
 
@@ -43,8 +49,7 @@
     </div>
 
     <div class="m-3" *ngIf="selectedApplication">
-      <button mat-raised-button color="accent" class="w-100"
-              (click)="downloadApplicationScript(selectedApplication, true)">
+      <button mat-raised-button color="accent" class="w-100" (click)="downloadApplicationScript(selectedApplication)">
         Download Script
       </button>
     </div>
@@ -96,19 +101,21 @@
       <thead>
       <tr>
         <th>Name</th>
-        <th>Parameters</th>
+        <th>Docker-Image</th>
+        <th>Notification-Address</th>
         <th class="col-3">Actions</th>
       </tr>
       </thead>
       <tbody>
       <tr class="application-row" *ngFor="let application of quantumApplications" (click)="selectApplication(application)">
         <td>{{ application.name }}</td>
-        <td>{{ getAmountOfParameters(application) }}</td>
+        <td>{{ application.dockerImage }}</td>
+        <td>{{ application.notificationAddress ? application.notificationAddress : '-' }}</td>
         <td class="col-3">
           <button type="button" class="btn btn-primary btn-sm" (click)="invokeApplication(application); $event.stopPropagation()">
             <i class="bi bi-play"></i>
           </button>
-          <button type="button" class="btn btn-primary btn-sm mx-1" (click)="downloadApplicationScript(application, true); $event.stopPropagation()">
+          <button type="button" class="btn btn-primary btn-sm mx-1" (click)="downloadApplicationScript(application); $event.stopPropagation()">
             <i class="bi bi-download"></i>
           </button>
           <button type="button" class="btn btn-danger btn-sm" (click)="deleteQuantumApplication(application._links.self.href); $event.stopPropagation()">
