@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { AbstractControl, Form, FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ProviderService } from '../../services/provider.service';
 
 @Component({
   selector: 'app-add-application',
@@ -12,38 +13,43 @@ export class AddQuantumApplicationComponent implements OnInit {
   parametersNameForm = new FormArray([]);
   parametersDefaultValueForm = new FormArray([]);
   parametersTypeForm = new FormArray([]);
+  availableProviders : any[] = [];
+  loadingProviders: boolean = true;
 
   form = new FormGroup({
     name: new FormControl(this.data.name, [
       Validators.required
     ]),
+    provider: new FormControl(this.data.provider, [
+      Validators.required
+    ]),
+    dockerImage: new FormControl(this.data.dockerImage),
+    notificationAddress: new FormControl(this.data.notificationAddress),
     file: new FormControl(this.data.name, [
       Validators.required
     ])
   });
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData,
+              private providerService: ProviderService,
               private dialogRef: MatDialogRef<AddQuantumApplicationComponent>) {
   }
 
   ngOnInit(): void {
+    this.providerService.getProviders().subscribe(response => {
+      this.availableProviders = response._embedded ? response._embedded.providers : [];
+      if (this.availableProviders.length > 0) {
+        this.provider?.setValue(this.availableProviders[0]);
+      }
+      this.loadingProviders = false;
+    });
     this.dialogRef.beforeClosed().subscribe(() => {
       this.data.name = this.name ? this.name.value : undefined;
       this.data.file = this.file ? this.file.value : undefined;
-      this.data.parameters = this.buildParameters();
+      this.data.provider = this.provider ? this.provider.value : undefined;
+      this.data.dockerImage = this.dockerImage ? this.dockerImage.value : undefined;
+      this.data.notificationAddress = this.notificationAddress ? this.notificationAddress.value : undefined;
     });
-  }
-
-  private buildParameters(): any {
-    const parameters = {};
-    for (let i = 0; i < this.parametersDefaultValueForm.length; i++) {
-      // @ts-ignore
-      parameters[this.parametersNameForm.at(i).value.toString()] = {
-        type: this.parametersTypeForm.at(i).value,
-        defaultValue: this.parametersDefaultValueForm.at(i).value
-      }
-    }
-    return parameters;
   }
 
   get name(): AbstractControl | null {
@@ -54,40 +60,21 @@ export class AddQuantumApplicationComponent implements OnInit {
     return this.form ? this.form.get('file') : null;
   }
 
-  removeParameter(index: number) {
-    this.parametersNameForm.removeAt(index);
-    this.parametersTypeForm.removeAt(index);
-    this.parametersDefaultValueForm.removeAt(index);
+  get provider(): AbstractControl | null {
+    return this.form ? this.form.get('provider') : null;
   }
 
-  addParameter(): void {
-    this.parametersNameForm.push(new FormControl('', Validators.required));
-    this.parametersTypeForm.push(new FormControl('STRING', Validators.required));
-    this.parametersDefaultValueForm.push(new FormControl('', Validators.required));
+  get dockerImage(): AbstractControl | null {
+    return this.form ? this.form.get('dockerImage') : null;
+  }
+
+  get notificationAddress(): AbstractControl | null {
+    return this.form ? this.form.get('notificationAddress') : null;
   }
 
   isRequiredDataMissing(): boolean {
     // @ts-ignore
-    return (this.name.errors?.required || this.file.errors?.required || this.checkParameters());
-  }
-
-  checkParameters(): boolean {
-    for (const control of this.parametersNameForm.controls) {
-      if (control.errors?.required) {
-        return true;
-      }
-    }
-    for (const control of this.parametersTypeForm.controls) {
-      if (control.errors?.required) {
-        return true;
-      }
-    }
-    for (const control of this.parametersDefaultValueForm.controls) {
-      if (control.errors?.required) {
-        return true;
-      }
-    }
-    return false;
+    return (this.name.errors?.required || this.provider.errors?.required || this.file.errors?.required);
   }
 
   close(): void {
@@ -99,6 +86,9 @@ export class AddQuantumApplicationComponent implements OnInit {
 export interface DialogData {
   title: string;
   name: string;
+  provider: any;
+  dockerImage: string;
+  notificationAddress: string;
   file: any;
   parameters?: any;
 }

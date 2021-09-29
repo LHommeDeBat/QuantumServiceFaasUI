@@ -62,11 +62,7 @@ export class QuantumApplicationListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(data => {
       if (data) {
-        const dto: QuantumApplicationUpload = {
-          name: data.name,
-          parameters: data.parameters
-        }
-        this.quantumApplicationService.createQuantumApplication(dto, data.file).subscribe(() => {
+        this.quantumApplicationService.createQuantumApplication(data.name, data.provider.name, data.dockerImage, data.notificationAddress, data.file).subscribe(() => {
           this.getQuantumApplications();
         });
       }

@@ -35,10 +35,13 @@ export class QuantumApplicationService {
     return this.http.get<any>(url, { responseType: 'blob'});
   }
 
-  createQuantumApplication(dto: QuantumApplicationUpload, file: File): Observable<any> {
+  createQuantumApplication(name: string, providerName: string, dockerImage: string, notificationAddress: string, file: File): Observable<any> {
     const formData = new FormData();
-    formData.append('script', file);
-    formData.append('dto', JSON.stringify(dto));
+    formData.append('file', file);
+    formData.append('name', name);
+    formData.append('providerName', providerName);
+    formData.append('dockerImage', dockerImage);
+    formData.append('notificationAddress', notificationAddress);
 
     return this.http.post<any>(this.url, formData);
   }
