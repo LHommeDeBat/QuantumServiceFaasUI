@@ -41,16 +41,17 @@ export class EventTriggerListComponent implements OnInit {
       },
     });
 
-    dialogRef.afterClosed().subscribe((data: EventTriggerDto) => {
+    dialogRef.afterClosed().subscribe((data) => {
       if (data) {
-        const dto: EventTriggerDto = {
+        const dto: any = {
           name: data.name,
           eventType: data.eventType,
-          queueSize: data.queueSize,
-          executedApplication: data.executedApplication
+          sizeThreshold: data.sizeThreshold,
+          executedApplicationName: data.executedApplication ? data.executedApplication.name : undefined
         };
+        console.log(dto);
 
-        this.eventTriggerService.createEventTrigger(dto).subscribe(() => {
+        this.eventTriggerService.createEventTrigger(data.provider.name, dto).subscribe(() => {
           this.getEventTriggers();
         });
       }

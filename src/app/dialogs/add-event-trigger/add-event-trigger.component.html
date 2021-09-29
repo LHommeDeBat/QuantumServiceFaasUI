@@ -8,8 +8,18 @@
     </mat-form-field>
 
     <mat-form-field class="w-100">
+      <mat-label>{{ loadingProviders ? 'Loading providers...' : 'Providers' }}</mat-label>
+      <mat-select id="provider" formControlName="provider" required [disabled]="this.availableProviders.length === 0">
+        <mat-option *ngFor="let provider of availableProviders" [value]="provider">{{ provider.name }}</mat-option>
+        <mat-option *ngIf="!loadingProviders && this.availableProviders.length === 0" [value]="'no-devices'">No providers available</mat-option>
+      </mat-select>
+      <mat-spinner matPrefix *ngIf="loadingProviders" mode="indeterminate" diameter="17"></mat-spinner>
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
       <mat-label>Type</mat-label>
       <mat-select id="eventType" formControlName="eventType" required>
+        <mat-option [value]="'BASIC'">Basic</mat-option>
         <mat-option [value]="'QUEUE_SIZE'">Queue Size</mat-option>
         <mat-option [value]="'EXECUTION_RESULT'">Execution Result</mat-option>
       </mat-select>
@@ -17,8 +27,8 @@
 
     <ng-container *ngIf="eventType && eventType.value === 'QUEUE_SIZE'">
       <mat-form-field class="w-100">
-        <mat-label>Queue Size</mat-label>
-        <input matInput id="queueSize" formControlName="queueSize" type="number" required>
+        <mat-label>Queue Size Threshold</mat-label>
+        <input matInput id="sizeThreshold" formControlName="sizeThreshold" type="number" required>
       </mat-form-field>
     </ng-container>
 

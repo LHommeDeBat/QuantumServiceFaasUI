@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { AbstractControl, FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ProviderService } from '../../services/provider.service';
 
@@ -10,9 +10,6 @@ import { ProviderService } from '../../services/provider.service';
 })
 export class AddQuantumApplicationComponent implements OnInit {
 
-  parametersNameForm = new FormArray([]);
-  parametersDefaultValueForm = new FormArray([]);
-  parametersTypeForm = new FormArray([]);
   availableProviders : any[] = [];
   loadingProviders: boolean = true;
 

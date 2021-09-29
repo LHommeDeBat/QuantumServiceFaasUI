@@ -16,8 +16,8 @@ export class EventTriggerService {
     return this.http.get<any>(this.url);
   }
 
-  createEventTrigger(dto: EventTriggerDto): Observable<any> {
-    return this.http.post<any>(this.url, dto);
+  createEventTrigger(providerName: string, dto: any): Observable<any> {
+    return this.http.post<any>(this.url + "?providerName=" + providerName, dto);
   }
 
   deleteEventTrigger(url: string): Observable<any> {

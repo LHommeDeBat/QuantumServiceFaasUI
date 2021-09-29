@@ -1,8 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { EventTriggerDto } from '../../models/event-trigger-dto';
 import { QuantumApplicationService } from '../../services/quantum-application.service';
+import { ProviderService } from '../../services/provider.service';
 
 @Component({
   selector: 'app-add-event',
@@ -12,15 +12,20 @@ import { QuantumApplicationService } from '../../services/quantum-application.se
 export class AddEventTriggerComponent implements OnInit {
 
   availableQuantumApplications: any[] = [];
+  availableProviders : any[] = [];
+  loadingProviders: boolean = true;
 
   form = new FormGroup({
     name: new FormControl(this.data.name ? this.data.name : '', [
       Validators.required
     ]),
-    eventType: new FormControl(this.data.eventType ? this.data.eventType : 'QUEUE_SIZE', [
+    provider: new FormControl(this.data.provider ? this.data.provider : '', [
       Validators.required
     ]),
-    queueSize: new FormControl(this.data.queueSize ? this.data.queueSize : undefined, [
+    eventType: new FormControl(this.data.eventType ? this.data.eventType : 'BASIC', [
+      Validators.required
+    ]),
+    sizeThreshold: new FormControl(this.data.sizeThreshold ? this.data.sizeThreshold : undefined, [
       Validators.required
     ]),
     executedApplication: new FormControl(this.data.executedApplication ? this.data.executedApplication : undefined, [
@@ -28,21 +33,30 @@ export class AddEventTriggerComponent implements OnInit {
     ])
   });
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: EventTriggerDto,
+  constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData,
+              private providerService: ProviderService,
               private quantumApplicationService: QuantumApplicationService,
               private dialogRef: MatDialogRef<AddEventTriggerComponent>) {
   }
 
   ngOnInit(): void {
+    this.providerService.getProviders().subscribe(response => {
+      this.availableProviders = response._embedded ? response._embedded.providers : [];
+      if (this.availableProviders.length > 0) {
+        this.provider?.setValue(this.availableProviders[0]);
+      }
+      this.loadingProviders = false;
+    });
     this.quantumApplicationService.getQuantumApplications(true).subscribe(response => {
       this.availableQuantumApplications = response._embedded ? response._embedded.quantumApplications : [];
     });
 
     this.dialogRef.beforeClosed().subscribe(() => {
       this.data.name = this.name ? this.name.value : undefined;
+      this.data.provider = this.provider ? this.provider.value : undefined;
       this.data.eventType = this.eventType ? this.eventType.value : undefined;
       if (this.data.eventType === 'QUEUE_SIZE') {
-        this.data.queueSize = this.queueSize ? this.queueSize.value : undefined;
+        this.data.sizeThreshold = this.sizeThreshold ? this.sizeThreshold.value : undefined;
       }
       if (this.data.eventType === 'EXECUTION_RESULT') {
         this.data.executedApplication = this.executedApplication ? this.executedApplication.value : undefined;
@@ -54,12 +68,16 @@ export class AddEventTriggerComponent implements OnInit {
     return this.form ? this.form.get('name') : null;
   }
 
+  get provider(): AbstractControl | null {
+    return this.form ? this.form.get('provider') : null;
+  }
+
   get eventType(): AbstractControl | null {
     return this.form ? this.form.get('eventType') : null;
   }
 
-  get queueSize(): AbstractControl | null {
-    return this.form ? this.form.get('queueSize') : null;
+  get sizeThreshold(): AbstractControl | null {
+    return this.form ? this.form.get('sizeThreshold') : null;
   }
 
   get executedApplication(): AbstractControl | null {
@@ -71,7 +89,8 @@ export class AddEventTriggerComponent implements OnInit {
     return (
       this.name?.errors?.required ||
       this.eventType?.errors?.required ||
-      (this.eventType?.value === 'QUEUE_SIZE' && this.queueSize?.errors?.required) ||
+      this.provider?.errors?.required ||
+      (this.eventType?.value === 'QUEUE_SIZE' && this.sizeThreshold?.errors?.required) ||
       (this.eventType?.value === 'EXECUTION_RESULT' && this.executedApplication?.errors?.required)
     );
   }
@@ -79,4 +98,12 @@ export class AddEventTriggerComponent implements OnInit {
   close(): void {
     this.dialogRef.close();
   }
+}
+
+export interface DialogData {
+  name: string;
+  provider: any;
+  eventType: string;
+  sizeThreshold: number;
+  executedApplication: any;
 }

@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { QuantumApplicationService } from '../services/quantum-application.service';
 import { AddQuantumApplicationComponent } from '../dialogs/add-quantum-application/add-quantum-application.component';
 import { MatDialog } from '@angular/material/dialog';
-import { QuantumApplicationUpload } from '../models/quantum-application-upload';
 import { MatDrawer } from '@angular/material/sidenav';
 import { EventTriggerService } from '../services/event-trigger.service';
 import { RegisterEventTriggersComponent } from '../dialogs/register-event-triggers/register-event-triggers.component';
@@ -19,7 +18,6 @@ export class QuantumApplicationListComponent implements OnInit {
   quantumApplications: any[] = [];
   selectedApplication: any = undefined;
   applicationEventTriggers: any[] = [];
-  reader: FileReader = new FileReader();
 
   @ViewChild('drawer') public drawer: MatDrawer | undefined;
 
@@ -30,12 +28,6 @@ export class QuantumApplicationListComponent implements OnInit {
 
   ngOnInit(): void {
     this.getQuantumApplications();
-
-    this.reader.addEventListener('loadend', (e) => {
-      if (e.target) {
-        this.selectedApplication.script = e.target.result;
-      }
-    });
   }
 
   getQuantumApplications(): void {
@@ -79,7 +71,6 @@ export class QuantumApplicationListComponent implements OnInit {
     if (!this.selectedApplication || this.selectedApplication.id !== application.id) {
       this.selectedApplication = application;
       this.selectedApplication.codeAsText = window.atob(this.selectedApplication.code);
-      console.log(this.selectedApplication);
       this.getApplicationEventTriggers(application._links.eventTriggers.href);
     }
     this.drawer?.open();
