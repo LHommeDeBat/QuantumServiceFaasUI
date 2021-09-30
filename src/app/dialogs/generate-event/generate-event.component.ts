@@ -29,7 +29,7 @@ export class GenerateEventComponent implements OnInit {
     eventType: new FormControl(this.data.eventType ? this.data.eventType : 'BASIC', [
       Validators.required
     ]),
-    sizeThreshold: new FormControl(this.data.sizeThreshold ? this.data.sizeThreshold: undefined, [
+    queueSize: new FormControl(this.data.queueSize ? this.data.queueSize: undefined, [
       Validators.required
     ]),
     executedApplicationName: new FormControl(this.data.executedApplicationName ? this.data.executedApplicationName : undefined, [
@@ -88,7 +88,7 @@ export class GenerateEventComponent implements OnInit {
         this.data.additionalProperties.triggerName = this.triggerName ? this.triggerName.value : undefined;
       }
       if (this.data.eventType === 'QUEUE_SIZE') {
-        this.data.additionalProperties.sizeThreshold = this.sizeThreshold ? this.sizeThreshold.value : undefined;
+        this.data.additionalProperties.queueSize = this.queueSize ? this.queueSize.value : undefined;
       }
       if (this.data.eventType === 'EXECUTION_RESULT') {
         this.data.additionalProperties.executedApplicationName = this.executedApplicationName ? this.executedApplicationName.value : undefined;
@@ -113,8 +113,8 @@ export class GenerateEventComponent implements OnInit {
     return this.form ? this.form.get('eventType') : null;
   }
 
-  get sizeThreshold(): AbstractControl | null {
-    return this.form ? this.form.get('sizeThreshold') : null;
+  get queueSize(): AbstractControl | null {
+    return this.form ? this.form.get('queueSize') : null;
   }
 
   get executedApplicationName(): AbstractControl | null {
@@ -143,7 +143,7 @@ export class GenerateEventComponent implements OnInit {
       this.availableDevices.length === 0 ||
       this.device?.errors?.required ||
       this.eventType?.errors?.required ||
-      (this.eventType?.value === 'QUEUE_SIZE' && this.sizeThreshold?.errors?.required) ||
+      (this.eventType?.value === 'QUEUE_SIZE' && this.queueSize?.errors?.required) ||
       (this.eventType?.value === 'EXECUTION_RESULT' && this.executedApplicationName?.errors?.required) ||
       (this.eventType?.value === 'BASIC' && this.triggerName?.errors?.required) ||
       this.checkParameters()

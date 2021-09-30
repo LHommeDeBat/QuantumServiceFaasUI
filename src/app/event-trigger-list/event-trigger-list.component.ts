@@ -1,6 +1,5 @@
 import { EventTriggerService } from '../services/event-trigger.service';
 import { Component, OnInit } from '@angular/core';
-import { EventTriggerDto } from '../models/event-trigger-dto';
 import { MatDialog } from '@angular/material/dialog';
 import { AddEventTriggerComponent } from '../dialogs/add-event-trigger/add-event-trigger.component';
 import { FireEventDto } from '../models/fire-event-dto';
