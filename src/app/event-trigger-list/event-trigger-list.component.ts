@@ -90,7 +90,6 @@ export class EventTriggerListComponent implements OnInit {
           eventPayloadProperties: data.eventPayloadProperties
         };
 
-        console.log(dto);
         this.eventTriggerService.emitEvent(dto).subscribe(() => {
           this.toastService.displayToast('Event was successfully fired!');
         });

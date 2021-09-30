@@ -33,10 +33,6 @@
     </mat-card>
 
     <mat-card class="m-3" *ngIf="selectedJob">
-      <mat-form-field class="w-100" *ngIf="selectedJob.scriptExecutionDate">
-        <mat-label>Script executed at</mat-label>
-        <input matInput [ngModel]="selectedJob.scriptExecutionDate | date:'MMMM d, y, H:mm:ss'" readonly>
-      </mat-form-field>
       <mat-form-field class="w-50" *ngIf="selectedJob.creationDate">
         <mat-label>Created at</mat-label>
         <input matInput [ngModel]="selectedJob.creationDate | date:'MMMM d, y, H:mm:ss'" readonly>
@@ -62,24 +58,15 @@
       </mat-form-field>
     </mat-card>
 
-    <mat-card class="m-3" *ngIf="selectedJob && selectedJob.quantumApplication.script">
+    <mat-card class="m-3" *ngIf="selectedJob && selectedJob.quantumApplication">
       <mat-form-field class="w-100">
         <mat-label>Script</mat-label>
-        <textarea matInput [ngModel]="selectedJob.quantumApplication.script" [matTextareaAutosize]="true" readonly></textarea>
+        <textarea matInput [ngModel]="selectedJob.quantumApplication.code" [matTextareaAutosize]="true" readonly></textarea>
       </mat-form-field>
 
-      <h4>Used Parameters</h4>
       <mat-form-field class="w-100">
-        <mat-label>device</mat-label>
-        <input matInput [ngModel]="selectedJob.device" readonly>
-      </mat-form-field>
-      <mat-form-field class="w-100">
-        <mat-label>apiToken</mat-label>
-        <input matInput [ngModel]="'**********************'" readonly>
-      </mat-form-field>
-      <mat-form-field class="w-100" *ngFor="let parameter of selectedJob.usedParameters | keyvalue">
-        <mat-label>{{ parameter.key }}</mat-label>
-        <input matInput [ngModel]="parameter.value" readonly>
+        <mat-label>Input-Parameters</mat-label>
+        <textarea matInput [ngModel]="parseResult(selectedJob.inputParams) | json" [matTextareaAutosize]="true" readonly></textarea>
       </mat-form-field>
     </mat-card>
 
@@ -131,13 +118,6 @@
           </a>
         </th>
         <th>
-          <a (click)="changeSort('scriptExecutionDate')">Script executed at
-            <i *ngIf="checkSort('scriptExecutionDate') !== 'none'"
-               [ngClass]="checkSort('scriptExecutionDate') === 'desc' ? 'bi bi-arrow-down' : 'bi bi-arrow-up'">
-            </i>
-          </a>
-        </th>
-        <th>
           <a (click)="changeSort('creationDate')">Created at
             <i *ngIf="checkSort('creationDate') !== 'none'"
                [ngClass]="checkSort('creationDate') === 'desc' ? 'bi bi-arrow-down' : 'bi bi-arrow-up'">
@@ -158,7 +138,6 @@
         <td>{{ job.quantumApplication ? job.quantumApplication.name : '' }}</td>
         <td>{{ job.device }}</td>
         <td>{{ job.status }}</td>
-        <td>{{ job.scriptExecutionDate | date:'MMMM d, y, H:mm:ss' }}</td>
         <td>{{ job.creationDate | date:'MMMM d, y, H:mm:ss' }}</td>
         <td>{{ job.endDate | date:'MMMM d, y, H:mm:ss' }}</td>
       </tr>

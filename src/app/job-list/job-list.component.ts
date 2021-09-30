@@ -14,7 +14,7 @@ export class JobListComponent implements OnInit, OnDestroy {
   page: number = 0;
   pageSize: number = 25;
   sort: any = {
-    scriptExecutionDate: 'desc'
+    creationDate: 'desc'
   };
   jobTimer: any;
   reader: FileReader = new FileReader();
@@ -43,12 +43,6 @@ export class JobListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getJobs();
     this.startJobTimer();
-
-    this.reader.addEventListener('loadend', (e) => {
-      if (e.target) {
-        this.selectedJob.quantumApplication.script = e.target.result;
-      }
-    });
   }
 
   ngOnDestroy(): void {
@@ -79,24 +73,17 @@ export class JobListComponent implements OnInit, OnDestroy {
     });
   }
 
-  downloadApplicationScript(application: any): void {
-    this.quantumApplicationService.downloadApplicationScript(application._links.script.href).subscribe(response => {
-      this.reader.readAsText(response);
-    });
-  }
-
   selectJob(job: any) {
     if (!this.selectedJob || this.selectedJob.id !== job.id) {
       this.selectedJob = job;
 
       for (const key of Object.keys(this.selectedJob.statusDetails)) {
-        console.log(key);
         this.selectedJob.statusDetails[key].status = key;
       }
       // @ts-ignore
       this.sortedJobStatuses = Object.values(this.selectedJob.statusDetails).sort((a, b) => (a.statusReached > b.statusReached) ? 1 : ((b.statusReached > a.statusReached) ? -1 : 0));
 
-      this.downloadApplicationScript(this.selectedJob.quantumApplication);
+      this.selectedJob.quantumApplication.code = window.atob(this.selectedJob.quantumApplication.code);
     }
     this.drawer?.open();
   }
