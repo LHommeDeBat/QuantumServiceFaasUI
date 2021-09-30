@@ -11,7 +11,9 @@
       <mat-label>{{ loadingProviders ? 'Loading providers...' : 'Providers' }}</mat-label>
       <mat-select id="provider" formControlName="provider" required [disabled]="this.availableProviders.length === 0">
         <mat-option *ngFor="let provider of availableProviders" [value]="provider">{{ provider.name }}</mat-option>
-        <mat-option *ngIf="!loadingProviders && this.availableProviders.length === 0" [value]="'no-devices'">No providers available</mat-option>
+        <mat-option *ngIf="!loadingProviders && this.availableProviders.length === 0" [value]="'no-devices'">No
+          providers available
+        </mat-option>
       </mat-select>
       <mat-spinner matPrefix *ngIf="loadingProviders" mode="indeterminate" diameter="17"></mat-spinner>
     </mat-form-field>
@@ -32,6 +34,19 @@
       </mat-form-field>
     </ng-container>
 
+    <ng-container *ngIf="eventType && eventType.value === 'QUEUE_SIZE'">
+      <mat-form-field class="w-100">
+        <mat-label>{{ loadingDevices ? 'Loading devices...' : 'Devices' }}</mat-label>
+        <mat-select id="trackedDevices" formControlName="trackedDevices" required [disabled]="this.availableDevices.length === 0" multiple>
+          <mat-option *ngFor="let device of availableDevices" [value]="device">{{ device }}</mat-option>
+          <mat-option *ngIf="!loadingDevices && this.availableDevices.length === 0" [value]="'no-devices'">No
+            devices available
+          </mat-option>
+        </mat-select>
+        <mat-spinner matPrefix *ngIf="loadingDevices" mode="indeterminate" diameter="17"></mat-spinner>
+      </mat-form-field>
+    </ng-container>
+
     <ng-container *ngIf="eventType && eventType.value === 'EXECUTION_RESULT'">
       <mat-form-field class="w-100">
         <mat-label>Quantum-Application</mat-label>
@@ -47,5 +62,6 @@
 
 <mat-dialog-actions>
   <button mat-raised-button (click)="close()">Close</button>
-  <button mat-raised-button color="primary" [disabled]="isRequiredDataMissing()" [mat-dialog-close]="data">Create</button>
+  <button mat-raised-button color="primary" [disabled]="isRequiredDataMissing()" [mat-dialog-close]="data">Create
+  </button>
 </mat-dialog-actions>

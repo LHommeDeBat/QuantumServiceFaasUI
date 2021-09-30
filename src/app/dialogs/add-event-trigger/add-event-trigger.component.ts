@@ -3,6 +3,7 @@ import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/fo
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { QuantumApplicationService } from '../../services/quantum-application.service';
 import { ProviderService } from '../../services/provider.service';
+import { IbmqService } from '../../services/ibmq.service';
 
 @Component({
   selector: 'app-add-event',
@@ -13,6 +14,8 @@ export class AddEventTriggerComponent implements OnInit {
 
   availableQuantumApplications: any[] = [];
   availableProviders : any[] = [];
+  availableDevices: any[] = [];
+  loadingDevices: boolean = true;
   loadingProviders: boolean = true;
 
   form = new FormGroup({
@@ -28,18 +31,26 @@ export class AddEventTriggerComponent implements OnInit {
     sizeThreshold: new FormControl(this.data.sizeThreshold ? this.data.sizeThreshold : undefined, [
       Validators.required
     ]),
+    trackedDevices: new FormControl(this.data.trackedDevices ? this.data.trackedDevices : '', [
+      Validators.required
+    ]),
     executedApplication: new FormControl(this.data.executedApplication ? this.data.executedApplication : undefined, [
       Validators.required
     ])
   });
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData,
+              private ibmqService: IbmqService,
               private providerService: ProviderService,
               private quantumApplicationService: QuantumApplicationService,
               private dialogRef: MatDialogRef<AddEventTriggerComponent>) {
   }
 
   ngOnInit(): void {
+    this.ibmqService.getAvailableDevices().subscribe(response => {
+      this.loadingDevices = false;
+      this.availableDevices = response ? response : [];
+    });
     this.providerService.getProviders().subscribe(response => {
       this.availableProviders = response._embedded ? response._embedded.providers : [];
       if (this.availableProviders.length > 0) {
@@ -57,6 +68,7 @@ export class AddEventTriggerComponent implements OnInit {
       this.data.eventType = this.eventType ? this.eventType.value : undefined;
       if (this.data.eventType === 'QUEUE_SIZE') {
         this.data.sizeThreshold = this.sizeThreshold ? this.sizeThreshold.value : undefined;
+        this.data.trackedDevices = this.trackedDevices ? this.trackedDevices.value : undefined;
       }
       if (this.data.eventType === 'EXECUTION_RESULT') {
         this.data.executedApplication = this.executedApplication ? this.executedApplication.value : undefined;
@@ -78,6 +90,10 @@ export class AddEventTriggerComponent implements OnInit {
 
   get sizeThreshold(): AbstractControl | null {
     return this.form ? this.form.get('sizeThreshold') : null;
+  }
+
+  get trackedDevices(): AbstractControl | null {
+    return this.form ? this.form.get('trackedDevices') : null;
   }
 
   get executedApplication(): AbstractControl | null {
@@ -105,5 +121,6 @@ export interface DialogData {
   provider: any;
   eventType: string;
   sizeThreshold: number;
+  trackedDevices: string[];
   executedApplication: any;
 }

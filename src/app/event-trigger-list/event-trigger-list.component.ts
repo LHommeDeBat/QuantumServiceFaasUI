@@ -47,6 +47,7 @@ export class EventTriggerListComponent implements OnInit {
           name: data.name,
           eventType: data.eventType,
           sizeThreshold: data.sizeThreshold,
+          trackedDevices: data.trackedDevices,
           executedApplicationName: data.executedApplication ? data.executedApplication.name : undefined
         };
 
