@@ -40,8 +40,12 @@ export class QuantumApplicationService {
     formData.append('file', file);
     formData.append('name', name);
     formData.append('providerName', providerName);
-    formData.append('dockerImage', dockerImage);
-    formData.append('notificationAddress', notificationAddress);
+    if (dockerImage) {
+      formData.append('dockerImage', dockerImage);
+    }
+    if (notificationAddress) {
+      formData.append('notificationAddress', notificationAddress);
+    }
 
     return this.http.post<any>(this.url, formData);
   }

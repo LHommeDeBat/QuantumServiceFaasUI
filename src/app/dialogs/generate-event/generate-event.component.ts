@@ -20,6 +20,7 @@ export class GenerateEventComponent implements OnInit {
 
   parametersNameForm = new FormArray([]);
   parametersValueForm = new FormArray([]);
+  parametersTypeForm = new FormArray([]);
 
   form = new FormGroup({
     device: new FormControl('no-devices', [
@@ -51,6 +52,10 @@ export class GenerateEventComponent implements OnInit {
       this.data.additionalProperties = {};
     }
 
+    if (!this.data.eventPayloadProperties) {
+      this.data.eventPayloadProperties = {};
+    }
+
     this.quantumApplicationService.getQuantumApplications().subscribe(response => {
       this.quantumApplications = response._embedded ? response._embedded.quantumApplications : [];
 
@@ -77,7 +82,7 @@ export class GenerateEventComponent implements OnInit {
     });
 
     this.dialogRef.beforeClosed().subscribe(() => {
-      this.data.device = this.device ? this.device.value : undefined;
+      this.data.eventPayloadProperties['device'] = this.device ? this.device.value : undefined;
       this.data.eventType = this.eventType ? this.eventType.value : undefined;
       if (this.data.eventType === 'BASIC') {
         this.data.additionalProperties.triggerName = this.triggerName ? this.triggerName.value : undefined;
@@ -89,7 +94,13 @@ export class GenerateEventComponent implements OnInit {
         this.data.additionalProperties.executedApplicationName = this.executedApplicationName ? this.executedApplicationName.value : undefined;
       }
       for (let i = 0; i < this.parametersNameForm.length; i++) {
-        this.data.additionalProperties[this.parametersNameForm.at(i).value.toString()] = this.parametersValueForm.at(i).value;
+        if (this.parametersTypeForm.at(i).value == 'TEXT') {
+          this.data.eventPayloadProperties[this.parametersNameForm.at(i).value.toString()] = this.parametersValueForm.at(i).value;
+        } else if (this.parametersTypeForm.at(i).value == 'BOOLEAN') {
+          this.data.eventPayloadProperties[this.parametersNameForm.at(i).value.toString()] = JSON.parse(this.parametersValueForm.at(i).value);
+        } else {
+          this.data.eventPayloadProperties[this.parametersNameForm.at(i).value.toString()] = +this.parametersValueForm.at(i).value;
+        }
       }
     });
   }
@@ -117,11 +128,13 @@ export class GenerateEventComponent implements OnInit {
   removeParameter(index: number) {
     this.parametersNameForm.removeAt(index);
     this.parametersValueForm.removeAt(index);
+    this.parametersTypeForm.removeAt(index);
   }
 
   addParameter(): void {
     this.parametersNameForm.push(new FormControl('', Validators.required));
     this.parametersValueForm.push(new FormControl('', Validators.required));
+    this.parametersTypeForm.push(new FormControl('TEXT', Validators.required));
   }
 
   isRequiredDataMissing(): boolean {
@@ -144,6 +157,11 @@ export class GenerateEventComponent implements OnInit {
       }
     }
     for (const control of this.parametersValueForm.controls) {
+      if (control.errors?.required) {
+        return true;
+      }
+    }
+    for (const control of this.parametersTypeForm.controls) {
       if (control.errors?.required) {
         return true;
       }

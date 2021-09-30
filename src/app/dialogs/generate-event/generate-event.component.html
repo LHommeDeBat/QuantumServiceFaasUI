@@ -53,9 +53,17 @@
 
     <div *ngFor="let parameter of parametersNameForm.controls; let i = index">
       <div>
-        <mat-form-field class="w-40">
+        <mat-form-field class="w-25">
           <mat-label>Name</mat-label>
           <input [formControl]="$any(parametersNameForm).controls[i]" matInput required>
+        </mat-form-field>
+        <mat-form-field class="mx-2 w-15">
+          <mat-label>Type</mat-label>
+          <mat-select [formControl]="$any(parametersTypeForm).controls[i]" required>
+            <mat-option value="TEXT">Text</mat-option>
+            <mat-option value="NUMBER">Number</mat-option>
+            <mat-option value="BOOLEAN">Boolean</mat-option>
+          </mat-select>
         </mat-form-field>
         <mat-form-field class="w-40 mx-4">
           <mat-label>Value</mat-label>

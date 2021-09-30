@@ -29,11 +29,6 @@ export class RegisterEventTriggersComponent implements OnInit {
       for (const eventTrigger of eventTriggers) {
         if (this.data.registeredEventTriggers.find(e => e.id === eventTrigger.id) == undefined) {
           this.availableEventTriggers.push(eventTrigger);
-          if (eventTrigger.eventType === 'EXECUTION_RESULT') {
-            this.quantumApplicationService.getQuantumApplication(eventTrigger._links.executedApplication.href).subscribe( response => {
-              eventTrigger.executedApplication = response ? response : undefined;
-            });
-          }
         }
       }
     });
@@ -45,7 +40,7 @@ export class RegisterEventTriggersComponent implements OnInit {
     }
 
     if (eventTrigger.eventType === 'EXECUTION_RESULT') {
-      return eventTrigger.eventType + ' (' + eventTrigger.executedApplication.name + ')';
+      return eventTrigger.eventType + ' (' + eventTrigger.executedApplicationName + ')';
     }
 
     return eventTrigger.eventType;

@@ -24,8 +24,8 @@ export class EventTriggerService {
     return this.http.delete<any>(url);
   }
 
-  fireEvent(dto: any): Observable<any> {
-    return this.http.post(this.url + '/fire-event', dto);
+  emitEvent(dto: any): Observable<any> {
+    return this.http.post(this.url + '/emit-event', dto);
   }
 
   unregisterApplication(eventName: string, applicationName: string): Observable<any> {

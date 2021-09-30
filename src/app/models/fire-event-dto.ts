@@ -5,4 +5,5 @@ export class FireEventDto {
   sizeThreshold?: number;
   triggerName?: string;
   additionalProperties: any;
+  eventPayloadProperties?: any;
 }
