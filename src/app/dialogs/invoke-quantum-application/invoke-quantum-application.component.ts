@@ -12,17 +12,16 @@ export class InvokeQuantumApplicationComponent implements OnInit {
 
   availableDevices: string[] = [];
   loadingDevices: boolean = true;
-  parametersForm = new FormArray([]);
+
+  parametersNameForm = new FormArray([]);
+  parametersValueForm = new FormArray([]);
+  parametersTypeForm = new FormArray([]);
 
   form = new FormGroup({
     device: new FormControl('no-devices', [
       // eslint-disable-next-line @typescript-eslint/unbound-method
       Validators.required
-    ]),
-    replyTo: new FormControl(this.data.replyTo ? this.data.replyTo : 'JOB.RESULT.QUEUE', [
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      Validators.required
-    ]),
+    ])
   });
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: InvokeApplicationForm,
@@ -31,8 +30,8 @@ export class InvokeQuantumApplicationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    for (const parameter in this.data.applicationParameters) {
-      this.parametersForm.push(new FormControl('', Validators.required));
+    if (!this.data.applicationParameters) {
+      this.data.applicationParameters = {};
     }
     this.ibmqService.getAvailableDevices().subscribe(response => {
       this.loadingDevices = false;
@@ -44,9 +43,16 @@ export class InvokeQuantumApplicationComponent implements OnInit {
     });
 
     this.dialogRef.beforeClosed().subscribe(() => {
-      this.data.device = this.device ? this.device.value : undefined;
-      this.data.replyTo = this.replyTo ? this.replyTo.value : undefined;
-      this.data.applicationParameters = this.parametersAvailable() ? this.buildParameters() : undefined;
+      this.data.applicationParameters['device'] = this.device ? this.device.value : undefined;
+      for (let i = 0; i < this.parametersNameForm.length; i++) {
+        if (this.parametersTypeForm.at(i).value == 'TEXT') {
+          this.data.applicationParameters[this.parametersNameForm.at(i).value.toString()] = this.parametersValueForm.at(i).value;
+        } else if (this.parametersTypeForm.at(i).value == 'BOOLEAN') {
+          this.data.applicationParameters[this.parametersNameForm.at(i).value.toString()] = JSON.parse(this.parametersValueForm.at(i).value);
+        } else {
+          this.data.applicationParameters[this.parametersNameForm.at(i).value.toString()] = +this.parametersValueForm.at(i).value;
+        }
+      }
     });
   }
 
@@ -58,13 +64,39 @@ export class InvokeQuantumApplicationComponent implements OnInit {
     return this.form ? this.form.get('replyTo') : null;
   }
 
+  removeParameter(index: number) {
+    this.parametersNameForm.removeAt(index);
+    this.parametersValueForm.removeAt(index);
+    this.parametersTypeForm.removeAt(index);
+  }
+
+  addParameter(): void {
+    this.parametersNameForm.push(new FormControl('', Validators.required));
+    this.parametersValueForm.push(new FormControl('', Validators.required));
+    this.parametersTypeForm.push(new FormControl('TEXT', Validators.required));
+  }
+
   isRequiredDataMissing(): boolean {
     // @ts-ignore
-    return (this.availableDevices.length === 0 || this.device?.errors?.required || this.replyTo?.errors?.required || this.checkParameters());
+    return (
+      this.availableDevices.length === 0 ||
+      this.device?.errors?.required ||
+      this.checkParameters()
+    );
   }
 
   checkParameters(): boolean {
-    for (const control of this.parametersForm.controls) {
+    for (const control of this.parametersNameForm.controls) {
+      if (control.errors?.required) {
+        return true;
+      }
+    }
+    for (const control of this.parametersValueForm.controls) {
+      if (control.errors?.required) {
+        return true;
+      }
+    }
+    for (const control of this.parametersTypeForm.controls) {
       if (control.errors?.required) {
         return true;
       }
@@ -75,40 +107,10 @@ export class InvokeQuantumApplicationComponent implements OnInit {
   close(): void {
     this.dialogRef.close();
   }
-
-  parametersAvailable(): boolean {
-    return this.data.applicationParameters && Object.keys(this.data.applicationParameters).length > 0;
-  }
-
-  getParameterList(): string[] {
-    return this.data.applicationParameters ? Object.keys(this.data.applicationParameters) : [];
-  }
-
-  getInputType(parameter: string): string {
-    const type = this.getParameterType(parameter);
-    return type === 'FLOAT' || type === 'INTEGER' ? 'number' : 'text';
-  }
-
-  getParameterType(parameter: string): string {
-    return this.data.applicationParameters[parameter].type;
-  }
-
-  buildParameters(): any {
-    let parameters = {};
-
-    let i = 0;
-    for (const key in this.data.applicationParameters) {
-      // @ts-ignore
-      parameters[key] = this.parametersForm.at(i).value;
-      i++;
-    }
-    return parameters;
-  }
 }
 
 export interface InvokeApplicationForm {
+  device: string;
   applicationName: string;
   applicationParameters: any;
-  device: string;
-  replyTo: string;
 }

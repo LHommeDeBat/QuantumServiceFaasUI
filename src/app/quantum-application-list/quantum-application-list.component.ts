@@ -117,20 +117,13 @@ export class QuantumApplicationListComponent implements OnInit {
   invokeApplication(application: any): void {
     const dialogRef = this.dialog.open(InvokeQuantumApplicationComponent, {
       data: {
-        applicationName: application.name,
-        applicationParameters: application.parameters,
+        applicationName: application.name
       },
     });
 
     dialogRef.afterClosed().subscribe((data) => {
       if (data) {
-        const dto: any = {
-          device: data.device,
-          replyTo: data.replyTo,
-          additionalProperties: data.applicationParameters
-        };
-
-        this.quantumApplicationService.invokeApplication(application._links.invoke.href, dto).subscribe(() => {
+        this.quantumApplicationService.invokeApplication(application._links.self.href, data.applicationParameters).subscribe(() => {
           this.toastService.displayToast('Application invocation was successfully transmitted!');
         });
       }
