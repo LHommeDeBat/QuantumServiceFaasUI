@@ -36,7 +36,7 @@ export class RegisterEventTriggersComponent implements OnInit {
 
   generateEventTypeDisplay(eventTrigger: any): string {
     if (eventTrigger.eventType === 'QUEUE_SIZE') {
-      return eventTrigger.eventType + ' <= ' + eventTrigger.queueSize;
+      return eventTrigger.eventType + ' <= ' + eventTrigger.sizeThreshold;
     }
 
     if (eventTrigger.eventType === 'EXECUTION_RESULT') {
