@@ -49,7 +49,6 @@ export class EventTriggerListComponent implements OnInit {
           sizeThreshold: data.sizeThreshold,
           executedApplicationName: data.executedApplication ? data.executedApplication.name : undefined
         };
-        console.log(dto);
 
         this.eventTriggerService.createEventTrigger(data.provider.name, dto).subscribe(() => {
           this.getEventTriggers();
