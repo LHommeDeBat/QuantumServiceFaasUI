@@ -32,9 +32,12 @@
         <mat-label>Queue Size Threshold</mat-label>
         <input matInput id="sizeThreshold" formControlName="sizeThreshold" type="number" required>
       </mat-form-field>
-    </ng-container>
 
-    <ng-container *ngIf="eventType && eventType.value === 'QUEUE_SIZE'">
+      <mat-form-field class="w-100">
+        <mat-label>Trigger-Delay (in minutes)</mat-label>
+        <input matInput id="triggerDelay" formControlName="triggerDelay" type="number">
+      </mat-form-field>
+
       <mat-form-field class="w-100">
         <mat-label>{{ loadingDevices ? 'Loading devices...' : 'Devices' }}</mat-label>
         <mat-select id="trackedDevices" formControlName="trackedDevices" required [disabled]="this.availableDevices.length === 0" multiple>

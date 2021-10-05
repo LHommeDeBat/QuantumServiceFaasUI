@@ -34,6 +34,9 @@ export class AddEventTriggerComponent implements OnInit {
     trackedDevices: new FormControl(this.data.trackedDevices ? this.data.trackedDevices : '', [
       Validators.required
     ]),
+    triggerDelay: new FormControl(this.data.triggerDelay ? this.data.triggerDelay : '', [
+      Validators.required
+    ]),
     executedApplication: new FormControl(this.data.executedApplication ? this.data.executedApplication : undefined, [
       Validators.required
     ])
@@ -69,6 +72,7 @@ export class AddEventTriggerComponent implements OnInit {
       if (this.data.eventType === 'QUEUE_SIZE') {
         this.data.sizeThreshold = this.sizeThreshold ? this.sizeThreshold.value : undefined;
         this.data.trackedDevices = this.trackedDevices ? this.trackedDevices.value : undefined;
+        this.data.triggerDelay = this.triggerDelay ? this.triggerDelay.value : undefined;
       }
       if (this.data.eventType === 'EXECUTION_RESULT') {
         this.data.executedApplication = this.executedApplication ? this.executedApplication.value : undefined;
@@ -96,6 +100,10 @@ export class AddEventTriggerComponent implements OnInit {
     return this.form ? this.form.get('trackedDevices') : null;
   }
 
+  get triggerDelay(): AbstractControl | null {
+    return this.form ? this.form.get('triggerDelay') : null;
+  }
+
   get executedApplication(): AbstractControl | null {
     return this.form ? this.form.get('executedApplication') : null;
   }
@@ -117,6 +125,7 @@ export class AddEventTriggerComponent implements OnInit {
 }
 
 export interface DialogData {
+  triggerDelay: number;
   name: string;
   provider: any;
   eventType: string;
