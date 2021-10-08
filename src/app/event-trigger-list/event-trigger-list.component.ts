@@ -66,7 +66,7 @@ export class EventTriggerListComponent implements OnInit {
 
   generateTypeDisplay(eventTrigger: any): string {
     if (eventTrigger.eventType === 'QUEUE_SIZE') {
-      return eventTrigger.eventType + ' <= ' + eventTrigger.sizeThreshold;
+      return eventTrigger.eventType + ' <= ' + eventTrigger.sizeThreshold + " [" + eventTrigger.trackedDevices + "]";
     }
 
     if (eventTrigger.eventType === 'EXECUTION_RESULT') {
