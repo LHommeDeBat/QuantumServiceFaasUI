@@ -27,13 +27,6 @@
       </mat-form-field>
     </mat-card>
 
-    <mat-card class="m-3" *ngIf="selectedApplication && selectedApplication.notificationAddress">
-      <mat-form-field class="w-100">
-        <mat-label>Notification-Address</mat-label>
-        <textarea matInput [ngModel]="selectedApplication.notificationAddress" [matTextareaAutosize]="true" readonly></textarea>
-      </mat-form-field>
-    </mat-card>
-
     <mat-card class="m-3" *ngIf="selectedApplication && selectedApplication.codeAsText">
       <mat-form-field class="w-100">
         <mat-label>Script</mat-label>
@@ -101,16 +94,16 @@
       <thead>
       <tr>
         <th>Name</th>
+        <th>Provider</th>
         <th>Docker-Image</th>
-        <th>Notification-Address</th>
         <th class="col-3">Actions</th>
       </tr>
       </thead>
       <tbody>
       <tr class="application-row" *ngFor="let application of quantumApplications" (click)="selectApplication(application)">
         <td>{{ application.name }}</td>
+        <td>{{ application.provider.name }}</td>
         <td>{{ application.dockerImage }}</td>
-        <td>{{ application.notificationAddress ? application.notificationAddress : '-' }}</td>
         <td class="col-3">
           <button type="button" class="btn btn-primary btn-sm" (click)="invokeApplication(application); $event.stopPropagation()">
             <i class="bi bi-play"></i>

@@ -6,6 +6,7 @@
     <thead>
     <tr>
       <th>Name</th>
+      <th>Namespace</th>
       <th>Base URL</th>
       <th class="col-3">Actions</th>
     </tr>
@@ -13,6 +14,7 @@
     <tbody>
     <tr *ngFor="let provider of providers">
       <td>{{ provider.name }}</td>
+      <td>{{ provider.namespace }}</td>
       <td>{{ provider.baseUrl }}</td>
       <td class="col-3">
         <button type="button" class="btn btn-danger btn-sm" (click)="deleteProvider(provider._links.self.href)">

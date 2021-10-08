@@ -21,7 +21,6 @@ export class AddQuantumApplicationComponent implements OnInit {
       Validators.required
     ]),
     dockerImage: new FormControl(this.data.dockerImage),
-    notificationAddress: new FormControl(this.data.notificationAddress),
     file: new FormControl(this.data.name, [
       Validators.required
     ])
@@ -45,7 +44,6 @@ export class AddQuantumApplicationComponent implements OnInit {
       this.data.file = this.file ? this.file.value : undefined;
       this.data.provider = this.provider ? this.provider.value : undefined;
       this.data.dockerImage = this.dockerImage ? this.dockerImage.value : undefined;
-      this.data.notificationAddress = this.notificationAddress ? this.notificationAddress.value : undefined;
     });
   }
 
@@ -63,10 +61,6 @@ export class AddQuantumApplicationComponent implements OnInit {
 
   get dockerImage(): AbstractControl | null {
     return this.form ? this.form.get('dockerImage') : null;
-  }
-
-  get notificationAddress(): AbstractControl | null {
-    return this.form ? this.form.get('notificationAddress') : null;
   }
 
   isRequiredDataMissing(): boolean {

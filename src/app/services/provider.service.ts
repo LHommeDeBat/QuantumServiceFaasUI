@@ -17,6 +17,10 @@ export class ProviderService {
     return this.http.get<any>(this.url);
   }
 
+  getProvider(url: string): Observable<any> {
+    return this.http.get<any>(url);
+  }
+
   deleteProvider(url: string): Observable<any> {
     return this.http.delete<any>(url);
   }
