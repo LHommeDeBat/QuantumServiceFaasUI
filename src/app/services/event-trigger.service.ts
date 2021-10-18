@@ -16,8 +16,8 @@ export class EventTriggerService {
     return this.http.get<any>(this.url);
   }
 
-  createEventTrigger(providerName: string, dto: any): Observable<any> {
-    return this.http.post<any>(this.url + "?providerName=" + providerName, dto);
+  createEventTrigger(openWhiskServiceName: string, dto: any): Observable<any> {
+    return this.http.post<any>(this.url + "?openWhiskServiceName=" + openWhiskServiceName, dto);
   }
 
   deleteEventTrigger(url: string): Observable<any> {

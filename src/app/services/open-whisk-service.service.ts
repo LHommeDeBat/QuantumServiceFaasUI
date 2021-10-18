@@ -2,30 +2,30 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { EventTriggerDto } from '../models/event-trigger-dto';
-import { ProviderDto } from '../models/provider-dto';
+import { OpenWhiskServiceDto } from '../models/open-whisk-service-dto';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProviderService {
+export class OpenWhiskServiceService {
 
-  url = 'http://localhost:8000/providers';
+  url = 'http://localhost:8000/openwhisk-services';
 
   constructor(private http: HttpClient) {}
 
-  getProviders(): Observable<any> {
+  getOpenWhiskServices(): Observable<any> {
     return this.http.get<any>(this.url);
   }
 
-  getProvider(url: string): Observable<any> {
+  getOpenWhiskService(url: string): Observable<any> {
     return this.http.get<any>(url);
   }
 
-  deleteProvider(url: string): Observable<any> {
+  deleteOpenWhiskService(url: string): Observable<any> {
     return this.http.delete<any>(url);
   }
 
-  createProvider(dto: ProviderDto): Observable<any> {
+  createOpenWhiskService(dto: OpenWhiskServiceDto): Observable<any> {
     return this.http.post<any>(this.url, dto);
   }
 }

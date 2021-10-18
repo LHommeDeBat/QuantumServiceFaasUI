@@ -51,7 +51,7 @@ export class EventTriggerListComponent implements OnInit {
           executedApplicationName: data.executedApplication ? data.executedApplication.name : undefined
         };
 
-        this.eventTriggerService.createEventTrigger(data.provider.name, dto).subscribe(() => {
+        this.eventTriggerService.createEventTrigger(data.openWhiskService.name, dto).subscribe(() => {
           this.getEventTriggers();
         });
       }

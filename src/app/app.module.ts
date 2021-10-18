@@ -28,8 +28,8 @@ import { GenerateEventComponent } from './dialogs/generate-event/generate-event.
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { InvokeQuantumApplicationComponent } from './dialogs/invoke-quantum-application/invoke-quantum-application.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { ProviderListComponent } from './provider-list/provider-list.component';
-import { AddProviderComponent } from './dialogs/add-provider/add-provider.component';
+import { OpenWhiskServiceListComponent } from './openwhisk-service-list/open-whisk-service-list.component';
+import { AddOpenWhiskServiceComponent } from './dialogs/add-openwhisk-service/add-open-whisk-service.component';
 
 @NgModule({
   declarations: [
@@ -42,8 +42,8 @@ import { AddProviderComponent } from './dialogs/add-provider/add-provider.compon
     RegisterEventTriggersComponent,
     GenerateEventComponent,
     InvokeQuantumApplicationComponent,
-    ProviderListComponent,
-    AddProviderComponent
+    OpenWhiskServiceListComponent,
+    AddOpenWhiskServiceComponent
   ],
   imports: [
     BrowserModule,

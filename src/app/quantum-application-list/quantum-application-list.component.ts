@@ -7,7 +7,7 @@ import { EventTriggerService } from '../services/event-trigger.service';
 import { RegisterEventTriggersComponent } from '../dialogs/register-event-triggers/register-event-triggers.component';
 import { InvokeQuantumApplicationComponent } from '../dialogs/invoke-quantum-application/invoke-quantum-application.component';
 import { ToastService } from '../services/toast.service';
-import { ProviderService } from '../services/provider.service';
+import { OpenWhiskServiceService } from '../services/open-whisk-service.service';
 
 @Component({
   selector: 'app-quantum-application-list',
@@ -24,7 +24,7 @@ export class QuantumApplicationListComponent implements OnInit {
 
   constructor(private quantumApplicationService: QuantumApplicationService,
               private eventService: EventTriggerService,
-              private providerService: ProviderService,
+              private openWhiskServiceService: OpenWhiskServiceService,
               private toastService: ToastService,
               private dialog: MatDialog) { }
 
@@ -36,8 +36,8 @@ export class QuantumApplicationListComponent implements OnInit {
     this.quantumApplicationService.getQuantumApplications().subscribe(response => {
       this.quantumApplications = response._embedded ? response._embedded.quantumApplications : [];
       for (const quantumApplication of this.quantumApplications) {
-        this.providerService.getProvider(quantumApplication._links.provider.href).subscribe((provider) => {
-          quantumApplication.provider = provider;
+        this.openWhiskServiceService.getOpenWhiskService(quantumApplication._links.openWhiskService.href).subscribe((openWhiskService) => {
+          quantumApplication.openWhiskService = openWhiskService;
         });
       }
     });
@@ -61,7 +61,8 @@ export class QuantumApplicationListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(data => {
       if (data) {
-        this.quantumApplicationService.createQuantumApplication(data.name, data.provider.name, data.dockerImage, data.notificationAddress, data.file).subscribe(() => {
+        console.log(data);
+        this.quantumApplicationService.createQuantumApplication(data.name, data.openWhiskService.name, data.dockerImage, data.notificationAddress, data.file).subscribe(() => {
           this.getQuantumApplications();
         });
       }

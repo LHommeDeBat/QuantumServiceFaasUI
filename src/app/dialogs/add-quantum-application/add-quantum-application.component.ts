@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ProviderService } from '../../services/provider.service';
+import { OpenWhiskServiceService } from '../../services/open-whisk-service.service';
 
 @Component({
   selector: 'app-add-application',
@@ -10,14 +10,14 @@ import { ProviderService } from '../../services/provider.service';
 })
 export class AddQuantumApplicationComponent implements OnInit {
 
-  availableProviders : any[] = [];
-  loadingProviders: boolean = true;
+  availableOpenWhiskServices : any[] = [];
+  loadingOpenWhiskServices: boolean = true;
 
   form = new FormGroup({
     name: new FormControl(this.data.name, [
       Validators.required
     ]),
-    provider: new FormControl(this.data.provider, [
+    openWhiskService: new FormControl(this.data.openWhiskService, [
       Validators.required
     ]),
     dockerImage: new FormControl(this.data.dockerImage),
@@ -27,22 +27,22 @@ export class AddQuantumApplicationComponent implements OnInit {
   });
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData,
-              private providerService: ProviderService,
+              private openWhiskServiceService: OpenWhiskServiceService,
               private dialogRef: MatDialogRef<AddQuantumApplicationComponent>) {
   }
 
   ngOnInit(): void {
-    this.providerService.getProviders().subscribe(response => {
-      this.availableProviders = response._embedded ? response._embedded.providers : [];
-      if (this.availableProviders.length > 0) {
-        this.provider?.setValue(this.availableProviders[0]);
+    this.openWhiskServiceService.getOpenWhiskServices().subscribe(response => {
+      this.availableOpenWhiskServices = response._embedded ? response._embedded.openWhiskServices : [];
+      if (this.availableOpenWhiskServices.length > 0) {
+        this.openWhiskService?.setValue(this.availableOpenWhiskServices[0]);
       }
-      this.loadingProviders = false;
+      this.loadingOpenWhiskServices = false;
     });
     this.dialogRef.beforeClosed().subscribe(() => {
       this.data.name = this.name ? this.name.value : undefined;
       this.data.file = this.file ? this.file.value : undefined;
-      this.data.provider = this.provider ? this.provider.value : undefined;
+      this.data.openWhiskService = this.openWhiskService ? this.openWhiskService.value : undefined;
       this.data.dockerImage = this.dockerImage ? this.dockerImage.value : undefined;
     });
   }
@@ -55,8 +55,8 @@ export class AddQuantumApplicationComponent implements OnInit {
     return this.form ? this.form.get('file') : null;
   }
 
-  get provider(): AbstractControl | null {
-    return this.form ? this.form.get('provider') : null;
+  get openWhiskService(): AbstractControl | null {
+    return this.form ? this.form.get('openWhiskService') : null;
   }
 
   get dockerImage(): AbstractControl | null {
@@ -65,7 +65,7 @@ export class AddQuantumApplicationComponent implements OnInit {
 
   isRequiredDataMissing(): boolean {
     // @ts-ignore
-    return (this.name.errors?.required || this.provider.errors?.required || this.file.errors?.required);
+    return (this.name.errors?.required || this.openWhiskService.errors?.required || this.file.errors?.required);
   }
 
   close(): void {
@@ -77,7 +77,7 @@ export class AddQuantumApplicationComponent implements OnInit {
 export interface DialogData {
   title: string;
   name: string;
-  provider: any;
+  openWhiskService: any;
   dockerImage: string;
   notificationAddress: string;
   file: any;
