@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class JobService {
 
-  url = 'http://localhost:8000/jobs';
+  url = environment.quantumServiceHost + ':' + environment.quantumServicePort + '/jobs';
 
   constructor(private http: HttpClient) { }
 

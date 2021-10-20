@@ -3,13 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { EventTriggerDto } from '../models/event-trigger-dto';
 import { OpenWhiskServiceDto } from '../models/open-whisk-service-dto';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OpenWhiskServiceService {
 
-  url = 'http://localhost:8000/openwhisk-services';
+  url = environment.quantumServiceHost + ':' + environment.quantumServicePort + '/openwhisk-services';
 
   constructor(private http: HttpClient) {}
 
