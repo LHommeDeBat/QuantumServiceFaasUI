@@ -1,6 +1,6 @@
 # QuantumServiceUI
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.1.0.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.1.0. It enables users to use a web-ui to interact with the [QuantumService](https://github.com/LHommeDeBat/QuantumServiceFaas).
 
 ## Development server
 
