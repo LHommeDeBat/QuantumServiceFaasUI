@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { QuantumApplicationUpload } from '../models/quantum-application-upload';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class QuantumApplicationService {
 
-  url = 'http://localhost:8000/quantum-applications';
+  url = environment.quantumServiceHost + ':' + environment.quantumServicePort + '/quantum-applications';
 
   constructor(private http: HttpClient) {}
 

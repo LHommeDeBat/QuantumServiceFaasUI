@@ -1,4 +1,4 @@
-export class ProviderDto {
+export class OpenWhiskServiceDto {
   name?: string;
   basicCredentials?: string;
   baseUrl?: number;

@@ -4,10 +4,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-add-provider',
-  templateUrl: './add-provider.component.html',
-  styleUrls: ['./add-provider.component.scss']
+  templateUrl: './add-open-whisk-service.component.html',
+  styleUrls: ['./add-open-whisk-service.component.scss']
 })
-export class AddProviderComponent implements OnInit {
+export class AddOpenWhiskServiceComponent implements OnInit {
 
   form = new FormGroup({
     name: new FormControl(this.data.name, [
@@ -28,7 +28,7 @@ export class AddProviderComponent implements OnInit {
   });
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData,
-              private dialogRef: MatDialogRef<AddProviderComponent>) {
+              private dialogRef: MatDialogRef<AddOpenWhiskServiceComponent>) {
   }
 
   ngOnInit() {
@@ -36,7 +36,7 @@ export class AddProviderComponent implements OnInit {
       this.data.name = this.name ? this.name.value : undefined;
       this.data.baseUrl = this.baseUrl ? this.baseUrl.value : undefined;
       this.data.basicUsername = this.basicUsername ? this.basicUsername.value : undefined;
-      this.data.basicPassword = this.basicPassword ? ':' + this.basicPassword.value : undefined;
+      this.data.basicPassword = this.basicPassword ? this.basicPassword.value : undefined;
       this.data.namespace = this.namespace ? this.namespace.value : undefined;
     });
   }

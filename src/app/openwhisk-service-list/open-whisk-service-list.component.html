@@ -12,7 +12,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let provider of providers">
+    <tr *ngFor="let provider of openWhiskServices">
       <td>{{ provider.name }}</td>
       <td>{{ provider.namespace }}</td>
       <td>{{ provider.baseUrl }}</td>
@@ -22,9 +22,9 @@
         </button>
       </td>
     </tr>
-    <tr *ngIf="providers.length === 0">
+    <tr *ngIf="openWhiskServices.length === 0">
       <div class="mt-1">
-        No providers found!
+        No OpenWhisk services found!
       </div>
     </tr>
     </tbody>

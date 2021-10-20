@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { QuantumApplicationService } from '../../services/quantum-application.service';
-import { ProviderService } from '../../services/provider.service';
+import { OpenWhiskServiceService } from '../../services/open-whisk-service.service';
 import { IbmqService } from '../../services/ibmq.service';
 
 @Component({
@@ -13,16 +13,16 @@ import { IbmqService } from '../../services/ibmq.service';
 export class AddEventTriggerComponent implements OnInit {
 
   availableQuantumApplications: any[] = [];
-  availableProviders : any[] = [];
+  availableOpenWhiskServices : any[] = [];
   availableDevices: any[] = [];
   loadingDevices: boolean = true;
-  loadingProviders: boolean = true;
+  loadingOpenWhiskServices: boolean = true;
 
   form = new FormGroup({
     name: new FormControl(this.data.name ? this.data.name : '', [
       Validators.required
     ]),
-    provider: new FormControl(this.data.provider ? this.data.provider : '', [
+    openWhiskService: new FormControl(this.data.openWhiskService ? this.data.openWhiskService : '', [
       Validators.required
     ]),
     eventType: new FormControl(this.data.eventType ? this.data.eventType : 'BASIC', [
@@ -44,7 +44,7 @@ export class AddEventTriggerComponent implements OnInit {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData,
               private ibmqService: IbmqService,
-              private providerService: ProviderService,
+              private openWhiskServiceService: OpenWhiskServiceService,
               private quantumApplicationService: QuantumApplicationService,
               private dialogRef: MatDialogRef<AddEventTriggerComponent>) {
   }
@@ -54,12 +54,12 @@ export class AddEventTriggerComponent implements OnInit {
       this.loadingDevices = false;
       this.availableDevices = response ? response : [];
     });
-    this.providerService.getProviders().subscribe(response => {
-      this.availableProviders = response._embedded ? response._embedded.providers : [];
-      if (this.availableProviders.length > 0) {
-        this.provider?.setValue(this.availableProviders[0]);
+    this.openWhiskServiceService.getOpenWhiskServices().subscribe(response => {
+      this.availableOpenWhiskServices = response._embedded ? response._embedded.openWhiskServices : [];
+      if (this.availableOpenWhiskServices.length > 0) {
+        this.openWhiskService?.setValue(this.availableOpenWhiskServices[0]);
       }
-      this.loadingProviders = false;
+      this.loadingOpenWhiskServices = false;
     });
     this.quantumApplicationService.getQuantumApplications(true).subscribe(response => {
       this.availableQuantumApplications = response._embedded ? response._embedded.quantumApplications : [];
@@ -67,7 +67,7 @@ export class AddEventTriggerComponent implements OnInit {
 
     this.dialogRef.beforeClosed().subscribe(() => {
       this.data.name = this.name ? this.name.value : undefined;
-      this.data.provider = this.provider ? this.provider.value : undefined;
+      this.data.openWhiskService = this.openWhiskService ? this.openWhiskService.value : undefined;
       this.data.eventType = this.eventType ? this.eventType.value : undefined;
       if (this.data.eventType === 'QUEUE_SIZE') {
         this.data.sizeThreshold = this.sizeThreshold ? this.sizeThreshold.value : undefined;
@@ -84,8 +84,8 @@ export class AddEventTriggerComponent implements OnInit {
     return this.form ? this.form.get('name') : null;
   }
 
-  get provider(): AbstractControl | null {
-    return this.form ? this.form.get('provider') : null;
+  get openWhiskService(): AbstractControl | null {
+    return this.form ? this.form.get('openWhiskService') : null;
   }
 
   get eventType(): AbstractControl | null {
@@ -113,7 +113,7 @@ export class AddEventTriggerComponent implements OnInit {
     return (
       this.name?.errors?.required ||
       this.eventType?.errors?.required ||
-      this.provider?.errors?.required ||
+      this.openWhiskService?.errors?.required ||
       (this.eventType?.value === 'QUEUE_SIZE' && this.sizeThreshold?.errors?.required) ||
       (this.eventType?.value === 'EXECUTION_RESULT' && this.executedApplication?.errors?.required)
     );
@@ -127,7 +127,7 @@ export class AddEventTriggerComponent implements OnInit {
 export interface DialogData {
   triggerDelay: number;
   name: string;
-  provider: any;
+  openWhiskService: any;
   eventType: string;
   sizeThreshold: number;
   trackedDevices: string[];

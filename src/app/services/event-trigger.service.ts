@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { EventTriggerDto } from '../models/event-trigger-dto';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EventTriggerService {
 
-  url = 'http://localhost:8000/event-triggers';
+  url = environment.quantumServiceHost + ':' + environment.quantumServicePort + '/event-triggers';
 
   constructor(private http: HttpClient) {}
 
@@ -16,8 +16,8 @@ export class EventTriggerService {
     return this.http.get<any>(this.url);
   }
 
-  createEventTrigger(providerName: string, dto: any): Observable<any> {
-    return this.http.post<any>(this.url + "?providerName=" + providerName, dto);
+  createEventTrigger(openWhiskServiceName: string, dto: any): Observable<any> {
+    return this.http.post<any>(this.url + "?openWhiskServiceName=" + openWhiskServiceName, dto);
   }
 
   deleteEventTrigger(url: string): Observable<any> {

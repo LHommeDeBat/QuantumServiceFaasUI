@@ -4,12 +4,12 @@ import { RouterModule, Routes } from '@angular/router';
 import { QuantumApplicationListComponent } from './quantum-application-list/quantum-application-list.component';
 import { EventTriggerListComponent } from './event-trigger-list/event-trigger-list.component';
 import { JobListComponent } from './job-list/job-list.component';
-import { ProviderListComponent } from './provider-list/provider-list.component';
+import { OpenWhiskServiceListComponent } from './openwhisk-service-list/open-whisk-service-list.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'quantum-applications', pathMatch: 'full' },
   { path: 'quantum-applications', component: QuantumApplicationListComponent },
-  { path: 'providers', component: ProviderListComponent },
+  { path: 'openwhisk-services', component: OpenWhiskServiceListComponent },
   { path: 'event-triggers', component: EventTriggerListComponent },
   { path: 'jobs', component: JobListComponent }
 ];
