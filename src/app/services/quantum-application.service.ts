@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { QuantumApplicationUpload } from '../models/quantum-application-upload';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -23,24 +22,15 @@ export class QuantumApplicationService {
     return this.http.get<any>(this.url, { params: params });
   }
 
-  getQuantumApplication(url: string): Observable<any> {
-    return this.http.get<any>(url);
-  }
-
   getApplicationEventTriggers(url: string): Observable<any> {
     return this.http.get<any>(url);
   }
 
-  downloadApplicationScript(url: string): Observable<any> {
-    // @ts-ignore
-    return this.http.get<any>(url, { responseType: 'blob'});
-  }
-
-  createQuantumApplication(name: string, providerName: string, dockerImage: string, notificationAddress: string, file: File): Observable<any> {
+  createQuantumApplication(name: string, openWhiskServiceName: string, dockerImage: string, notificationAddress: string, file: File): Observable<any> {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('name', name);
-    formData.append('providerName', providerName);
+    formData.append('openWhiskServiceName', openWhiskServiceName);
     if (dockerImage) {
       formData.append('dockerImage', dockerImage);
     }
